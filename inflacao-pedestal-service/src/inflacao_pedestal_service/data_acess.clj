@@ -1,7 +1,17 @@
 (ns inflacao-pedestal-service.data-acess
   (:require [cheshire.core :refer :all]
             [clj-http.client :as client]
-            [java-time :as jt]))
+            [clj-time.core :as t]
+            [clj-time.coerce :as c]
+            [clojure.java.jdbc :as jdbc]))
+
+(def pg-db {:dbtype "postgresql"
+            :dbname "mypgdatabase"
+            :host "mydb.server.com"
+            :user "myuser"
+            :password "secret"
+            :ssl true
+            :sslfactory "org.postgresql.ssl.NonValidatingFactory"})
 
 (def links-vector ["http://ipeadata.gov.br/api/odata4/ValoresSerie(SERCODIGO='PRECOS12_IPCA12')"])
 
@@ -14,22 +24,35 @@
   (client/get link {:accept :json} true))
 
 (defn parse-data [json]
-  (parse-string (:body json) true))
+  (:value (parse-string (:body json) true)))
 
 ;;not the best.......
 (defn update-date [data]
-  (subs data 0 7))
+  (let [data (:VALDATA data)]
+    (c/to-sql-date(subs data 0 10))))
 
 (defn update-data [data]
-  (println data)
-  (into []
-        (map
-          (update-date ))
+  (let [data-size (count data)]
+    (loop [i 0
+           updated-data data]
+      (if (< i data-size)
+      (recur (inc i) (assoc-in updated-data [i :VALDATA] (update-date (nth updated-data i))))
+      updated-data))))
+
+(defn check-last-data []
+
   )
+
+
+
+(defn save-data [data]
+  (let [last-data check-last-data]
+    (if (t/after? {:VALDATA data} last-data)
+      )))
 
 (defn access-data []
   (let [vector-size (count links-vector)]
     (loop [i 0]
       (if (< i vector-size)
-        ( do (update-data(parse-data(get-data (get links-vector i))))
+        ( do (println (update-data(parse-data(get-data (get links-vector i)))))
              (recur (inc i)))))))

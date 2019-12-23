@@ -18,10 +18,9 @@
     <orderEntry type="library" name="Leiningen: ch.qos.logback/logback-core:1.2.3" level="project" />
     <orderEntry type="library" name="Leiningen: cheshire:5.9.0" level="project" />
     <orderEntry type="library" name="Leiningen: clj-http:3.10.0" level="project" />
-    <orderEntry type="library" name="Leiningen: clj-time:0.14.3" level="project" />
+    <orderEntry type="library" name="Leiningen: clj-time:0.15.2" level="project" />
     <orderEntry type="library" name="Leiningen: clj-tuple:0.2.2" level="project" />
     <orderEntry type="library" name="Leiningen: clojure-complete:0.2.5" level="project" />
-    <orderEntry type="library" name="Leiningen: clojure.java-time:0.3.2" level="project" />
     <orderEntry type="library" name="Leiningen: com.cognitect/transit-clj:0.8.313" level="project" />
     <orderEntry type="library" name="Leiningen: com.cognitect/transit-java:0.8.337" level="project" />
     <orderEntry type="library" name="Leiningen: com.fasterxml.jackson.core/jackson-core:2.9.9" level="project" />
@@ -47,7 +46,7 @@
     <orderEntry type="library" name="Leiningen: io.pedestal/pedestal.service:0.5.7" level="project" />
     <orderEntry type="library" name="Leiningen: javax.servlet/javax.servlet-api:3.1.0" level="project" />
     <orderEntry type="library" name="Leiningen: javax.xml.bind/jaxb-api:2.3.0" level="project" />
-    <orderEntry type="library" name="Leiningen: joda-time:2.9.9" level="project" />
+    <orderEntry type="library" name="Leiningen: joda-time:2.10" level="project" />
     <orderEntry type="library" name="Leiningen: nrepl:0.6.0" level="project" />
     <orderEntry type="library" name="Leiningen: ns-tracker:0.4.0" level="project" />
     <orderEntry type="library" name="Leiningen: org.apache.httpcomponents/httpasyncclient:4.1.4" level="project" />
@@ -67,6 +66,7 @@
     <orderEntry type="library" name="Leiningen: org.clojure/data.priority-map:0.0.7" level="project" />
     <orderEntry type="library" name="Leiningen: org.clojure/data.xml:0.2.0-alpha5" level="project" />
     <orderEntry type="library" name="Leiningen: org.clojure/java.classpath:0.3.0" level="project" />
+    <orderEntry type="library" name="Leiningen: org.clojure/java.jdbc:0.7.10" level="project" />
     <orderEntry type="library" name="Leiningen: org.clojure/spec.alpha:0.2.176" level="project" />
     <orderEntry type="library" name="Leiningen: org.clojure/tools.analyzer.jvm:0.7.2" level="project" />
     <orderEntry type="library" name="Leiningen: org.clojure/tools.analyzer:0.6.9" level="project" />
@@ -93,6 +93,7 @@
     <orderEntry type="library" name="Leiningen: org.javassist/javassist:3.18.1-GA" level="project" />
     <orderEntry type="library" name="Leiningen: org.msgpack/msgpack:0.6.12" level="project" />
     <orderEntry type="library" name="Leiningen: org.ow2.asm/asm-all:4.2" level="project" />
+    <orderEntry type="library" name="Leiningen: org.postgresql/postgresql:42.2.9" level="project" />
     <orderEntry type="library" name="Leiningen: org.slf4j/jcl-over-slf4j:1.7.26" level="project" />
     <orderEntry type="library" name="Leiningen: org.slf4j/jul-to-slf4j:1.7.26" level="project" />
     <orderEntry type="library" name="Leiningen: org.slf4j/log4j-over-slf4j:1.7.26" level="project" />
