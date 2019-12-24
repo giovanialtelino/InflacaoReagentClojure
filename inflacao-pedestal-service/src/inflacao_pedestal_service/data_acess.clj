@@ -25,6 +25,9 @@
   (let [data (:VALDATA data)]
     (c/to-sql-date(subs data 0 10))))
 
+(.format (java.text.SimpleDateFormat. "MM") (new java.util.Date))
+
+
 (defn update-data [data]
   (let [data-size (count data)]
     (loop [i 0
@@ -37,7 +40,7 @@
   (let [data (database/get-last-update)]
     (if (nil? data)
       true
-      (if (f/instant->map data)))) )
+      (if (= (t/month ))))) )
 
 (defn save-data [data]
   (let [last-data check-last-data]
