@@ -3,15 +3,9 @@
             [clj-http.client :as client]
             [clj-time.core :as t]
             [clj-time.coerce :as c]
-            [clojure.java.jdbc :as jdbc]))
-
-(def pg-db {:dbtype "postgresql"
-            :dbname "mypgdatabase"
-            :host "mydb.server.com"
-            :user "myuser"
-            :password "secret"
-            :ssl true
-            :sslfactory "org.postgresql.ssl.NonValidatingFactory"})
+            [clj-time.format :as f]
+            [clj-time.predicates :as pr]
+            [inflacao-pedestal-service.database :as database]))
 
 (def links-vector ["http://ipeadata.gov.br/api/odata4/ValoresSerie(SERCODIGO='PRECOS12_IPCA12')"])
 
@@ -39,16 +33,16 @@
       (recur (inc i) (assoc-in updated-data [i :VALDATA] (update-date (nth updated-data i))))
       updated-data))))
 
-(defn check-last-data []
-
-  )
-
-
+(defn check-last-data [current-date ]
+  (let [data (database/get-last-update)]
+    (if (nil? data)
+      true
+      (if (f/instant->map data)))) )
 
 (defn save-data [data]
   (let [last-data check-last-data]
     (if (t/after? {:VALDATA data} last-data)
-      )))
+      0)))
 
 (defn access-data []
   (let [vector-size (count links-vector)]
