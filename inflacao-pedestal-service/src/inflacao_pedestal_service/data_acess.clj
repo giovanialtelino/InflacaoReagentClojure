@@ -25,31 +25,47 @@
   (let [data (:VALDATA data)]
     (c/to-sql-date(subs data 0 10))))
 
-(.format (java.text.SimpleDateFormat. "MM") (new java.util.Date))
-
-
 (defn update-data [data]
   (let [data-size (count data)]
     (loop [i 0
            updated-data data]
       (if (< i data-size)
-      (recur (inc i) (assoc-in updated-data [i :VALDATA] (update-date (nth updated-data i))))
-      updated-data))))
+        (recur (inc i) (assoc-in updated-data [i :VALDATA] (update-date (nth updated-data i))))
+        (do
+          updated-data)))))
 
-(defn check-last-data [current-date ]
+(defn same-month [last-update]
+  (if (= (.format (java.text.SimpleDateFormat. "MM") (new java.util.Date)) (t/month last-update))
+    true
+    false))
+
+(defn same-year [last-update]
+  (if (= (.format (java.text.SimpleDateFormat. "yyyy") (new java.util.Date)) (t/year last-update))
+    true
+    false))
+
+(defn check-last-data []
   (let [data (database/get-last-update)]
     (if (nil? data)
       true
-      (if (= (t/month ))))) )
+      (if (false? (same-month data))
+        true
+        (if (false? (same-year data))
+          true
+          false)))))
 
-(defn save-data [data]
-  (let [last-data check-last-data]
-    (if (t/after? {:VALDATA data} last-data)
-      0)))
-
-(defn access-data []
-  (let [vector-size (count links-vector)]
+(defn save-data [clean-data]
+  (let [vector-size (count clean-data)]
     (loop [i 0]
       (if (< i vector-size)
-        ( do (println (update-data(parse-data(get-data (get links-vector i)))))
-             (recur (inc i)))))))
+        (do (database/insert-data-inflacao (nth clean-data i))
+            (recur (inc i) ))))))
+
+(defn access-data []
+  (if (true? (check-last-data))
+    (let [vector-size (count links-vector)]
+      (loop [i 0]
+        (if (< i vector-size)
+          ( do (save-data (update-data(parse-data(get-data (get links-vector i)))))
+               (recur (inc i))))))
+    (println "Nothing to do now")))

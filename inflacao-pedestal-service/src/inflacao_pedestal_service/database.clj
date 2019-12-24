@@ -6,7 +6,7 @@
 (def pg-db {:dbtype "postgresql"
             :dbname "docker"
             :host "localhost"
-            :port "32769"
+            :port "32768"
             :user "docker"
             :password "docker"
             :ssl false
@@ -71,12 +71,21 @@
   (init-system))
 
 (defn get-last-update []
-  (jdbc/query pg-db ["SELECT MAX (updated) FROM last_update"]))
+  (:max (jdbc/query pg-db ["SELECT MAX (updated) FROM last_update"])))
+
+(defn check-if-date-key-already-exists [table date]
+  (let [exist (jdbc/query pg-db ["SELECT valvalor FROM precos12_ipca12 WHERE valdata = ?" date])
+        valor (:valvalor exist)]
+    (if (nil? valor)
+      false
+      true)))
 
 (defn insert-data-inflacao [data]
   (let [{:keys [SERCODIGO VALDATA VALVALOR NIVNOME TERCODIGO]} data]
-    (jdbc/insert! pg-db :table (string/lower-case SERCODIGO)
+    (if (false? (check-if-date-key-already-exists (string/lower-case SERCODIGO) VALDATA ))
+      (jdbc/insert! pg-db (keyword (string/lower-case SERCODIGO))
                   {:valdata VALDATA
                    :valvalor VALVALOR
                    :nivnome NIVNOME
-                   :tercodigo TERCODIGO})))
+                   :tercodigo TERCODIGO})
+      (println "Key was already presented"))))
