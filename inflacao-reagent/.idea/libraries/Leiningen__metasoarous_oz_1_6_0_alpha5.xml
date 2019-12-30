@@ -1,0 +1,9 @@
+<component name="libraryTable">
+  <library name="Leiningen: metasoarous/oz:1.6.0-alpha5">
+    <CLASSES>
+      <root url="jar://$MAVEN_REPOSITORY$/metasoarous/oz/1.6.0-alpha5/oz-1.6.0-alpha5.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</component>
