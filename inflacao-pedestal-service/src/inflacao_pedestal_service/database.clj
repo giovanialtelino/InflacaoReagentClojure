@@ -135,3 +135,7 @@
                    :valvalor VALVALOR
                    :nivnome NIVNOME
                    :tercodigo TERCODIGO}))))
+
+(defn get-value-date-table [date table]
+  (let [query (str "SELECT valvalor FROM " table " WHERE valdata = ?")]
+    (jdbc/query pg-db [query date])))

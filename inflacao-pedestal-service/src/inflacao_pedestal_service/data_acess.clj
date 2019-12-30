@@ -73,3 +73,5 @@
                (recur (inc i)))))
       (database/update-last-update))
     (println "Nothing to do now")))
+
+
