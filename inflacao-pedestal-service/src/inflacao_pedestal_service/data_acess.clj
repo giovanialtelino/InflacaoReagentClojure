@@ -11,7 +11,8 @@
                    "http://ipeadata.gov.br/api/odata4/ValoresSerie(SERCODIGO='IGP12_IGPM12')",
                    "http://ipeadata.gov.br/api/odata4/ValoresSerie(SERCODIGO='IGP12_IGPDI12')",
                    "http://ipeadata.gov.br/api/odata4/ValoresSerie(SERCODIGO='IGP12_IPC12')",
-                   "http://ipeadata.gov.br/api/odata4/ValoresSerie(SERCODIGO='PRECOS12_INPC12')"])
+                   "http://ipeadata.gov.br/api/odata4/ValoresSerie(SERCODIGO='PRECOS12_INPC12')"
+                  ])
 
 
 
@@ -37,16 +38,17 @@
 
 (defn same-month [last-update]
   (if (= (.format (java.text.SimpleDateFormat. "MM") (new java.util.Date)) (t/month last-update))
-    true
-    false))
+    (do (println "same month") true)
+    (do (println "not same month") false)))
 
 (defn same-year [last-update]
   (if (= (.format (java.text.SimpleDateFormat. "yyyy") (new java.util.Date)) (t/year last-update))
-    true
-    false))
+    (do (println "same year") true)
+    (do (println "not same year") false)))
 
 (defn check-last-data []
   (let [data (database/get-last-update)]
+    (println data)
     (if (nil? data)
       true
       (if (false? (same-month data))
@@ -60,10 +62,11 @@
     (loop [i 0]
       (if (< i vector-size)
         (do (database/insert-data-inflacao (nth clean-data i))
-            (recur (inc i) ))))))
+            (recur (inc i)))
+        (database/update-last-update)))))
 
 (defn access-data []
-  (if (true? (check-last-data))
+  (if (false? (check-last-data))
     (let [vector-size (count links-vector)]
       (loop [i 0]
         (if (< i vector-size)

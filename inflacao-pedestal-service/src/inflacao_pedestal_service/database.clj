@@ -1,6 +1,8 @@
 (ns inflacao-pedestal-service.database
   (:require
     [clojure.java.jdbc :as jdbc]
+    [clj-time.core :as t]
+    [clj-time.coerce :as c]
     [clojure.string :as string]))
 
 (def pg-db {:dbtype "postgresql"
@@ -79,7 +81,14 @@
 
 (def last-update
   (jdbc/create-table-ddl :last_update
-                         [[:updated :date]]))
+                         [[:id :serial :primary :key]
+                          [:updated :date]]))
+
+(defn initialize-first-update []
+  (let [date  (c/to-sql-date (t/date-time 1990 1 1))]
+    (println date)
+    (jdbc/insert! pg-db :last_update
+                  {:updated date})))
 
 (defn init-system []
   (jdbc/db-do-commands pg-db
@@ -88,7 +97,8 @@
                        create-table-igp12_ipc12
                        create-table-igp12_igpdi12
                        create-table-igp12_igpm12
-                       create-table-precos12_ipca12]))
+                       create-table-precos12_ipca12])
+  (initialize-first-update))
 
 (defn restart-system []
   (jdbc/db-do-commands pg-db [
@@ -101,7 +111,11 @@
   (init-system))
 
 (defn get-last-update []
-  (:max (jdbc/query pg-db ["SELECT MAX (updated) FROM last_update"])))
+  (:max (nth (jdbc/query pg-db ["SELECT MAX (updated) FROM last_update"]) 0)))
+
+(defn update-last-update []
+  (jdbc/insert! pg-db :last_update
+                {:updated (c/to-sql-date(t/now))}))
 
 (defn check-if-date-key-already-exists [table date]
     (case table
@@ -109,8 +123,8 @@
       "igp12_ipc12" (check-if-exists-igp12-ipc12 date)
       "igp12_igpdi12" (check-if-exists-igp12-igpdi12 date)
       "igp12_igpm12" (check-if-exists-igp12-igpm12 date)
-      true)
-  )
+      "precos12_ipca12" (check-if-exists-precos12-ipca12 date)
+      true))
 
 (defn insert-data-inflacao [data]
   (let [{:keys [SERCODIGO VALDATA VALVALOR NIVNOME TERCODIGO]} data]
