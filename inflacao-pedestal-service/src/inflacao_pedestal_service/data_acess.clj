@@ -37,18 +37,17 @@
           updated-data)))))
 
 (defn same-month [last-update]
-  (if (= (.format (java.text.SimpleDateFormat. "MM") (new java.util.Date)) (t/month last-update))
-    (do (println "same month") true)
-    (do (println "not same month") false)))
+  (if (= (.format (java.text.SimpleDateFormat. "MM") (new java.util.Date)) (.format (java.text.SimpleDateFormat. "MM") last-update))
+    true
+    false))
 
 (defn same-year [last-update]
-  (if (= (.format (java.text.SimpleDateFormat. "yyyy") (new java.util.Date)) (t/year last-update))
-    (do (println "same year") true)
-    (do (println "not same year") false)))
+  (if (= (.format (java.text.SimpleDateFormat. "yyyy") (new java.util.Date)) (.format (java.text.SimpleDateFormat. "yyyy") last-update))
+     true
+     false))
 
 (defn check-last-data []
   (let [data (database/get-last-update)]
-    (println data)
     (if (nil? data)
       true
       (if (false? (same-month data))
@@ -63,13 +62,14 @@
       (if (< i vector-size)
         (do (database/insert-data-inflacao (nth clean-data i))
             (recur (inc i)))
-        (database/update-last-update)))))
+        ))))
 
 (defn access-data []
-  (if (false? (check-last-data))
+  (if (true? (check-last-data))
     (let [vector-size (count links-vector)]
       (loop [i 0]
         (if (< i vector-size)
           ( do (save-data (update-data(parse-data(get-data (get links-vector i)))))
-               (recur (inc i))))))
+               (recur (inc i)))))
+      (database/update-last-update))
     (println "Nothing to do now")))
