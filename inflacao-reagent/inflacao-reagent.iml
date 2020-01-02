@@ -45,6 +45,7 @@
     <orderEntry type="library" name="Leiningen: clojure-complete:0.2.5" level="project" />
     <orderEntry type="library" name="Leiningen: clout:2.2.1" level="project" />
     <orderEntry type="library" name="Leiningen: co.deps/ring-etag-middleware:0.2.0" level="project" />
+    <orderEntry type="library" name="Leiningen: com.andrewmcveigh/cljs-time:0.5.2" level="project" />
     <orderEntry type="library" name="Leiningen: com.atlassian.commonmark/commonmark:0.8.0" level="project" />
     <orderEntry type="library" name="Leiningen: com.cemerick/clojurescript.test:0.0.4" level="project" />
     <orderEntry type="library" name="Leiningen: com.cemerick/pomegranate:0.3.1" level="project" />
