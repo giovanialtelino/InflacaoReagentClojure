@@ -9,7 +9,9 @@
                  [reagent "0.9.0-rc3"]
                  [cljsjs/semantic-ui-react "0.88.1-0"]
                  [metasoarous/oz "1.6.0-alpha5"]
-                 [cljsjs/d3 "5.12.0-0"]]
+                 [cljsjs/d3 "5.12.0-0"]
+                 [org.clojure/core.async "0.6.532"]
+                 [cljs-http "0.1.46"]]
 
   :plugins [[lein-cljsbuild "1.1.7"]
             [lein-figwheel "0.5.19"]]

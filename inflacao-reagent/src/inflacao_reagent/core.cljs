@@ -1,9 +1,20 @@
 (ns inflacao-reagent.core
-    (:require
+  (:require-macros [cljs.core.async.macros :refer [go]])
+  (:require
       [reagent.core :as r]
-      [cljsjs.d3 :as d3]))
+      [cljsjs.d3 :as d3]
+      [cljs-http.client :as http]
+      [cljs.core.async :refer [<!]]))
 
 (def inflacao-selecionada (r/atom ""))
+
+(defn send-stuff []
+  (println "Button was clicked")
+  (go (let [response (<! (http/get ""
+                                   {:with-credetials? false
+                                    :body ""}))]
+        (prn (:status response))
+        (prn (:body response)))))
 
 ;; -------------------------
 ;; Views
@@ -38,7 +49,11 @@
  ])
 
 (defn graph-field []
+  [:div.control
+   [:button.button.is-link {:on-click send-stuff} "Gerar Gráfico"]]
 )
+
+(defn send-button [])
 
 (defn home-page []
     [:div {:class "container"}
@@ -48,6 +63,8 @@
       [:div {:class "column"} [date-field]]
       [:div {:class "column"} [date-field]]
       [:div {:class "column"} [date-field]]]
+     [:div {:class "columns"}
+      [:div {:clas "column"} [send-button] ]]
      [:div {:class "columns"}
       [:div {:class "column"} [graph-field]]]])
 
