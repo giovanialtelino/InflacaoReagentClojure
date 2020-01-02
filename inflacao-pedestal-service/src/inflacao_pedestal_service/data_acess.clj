@@ -1,10 +1,7 @@
 (ns inflacao-pedestal-service.data-acess
   (:require [cheshire.core :refer :all]
             [clj-http.client :as client]
-            [clj-time.core :as t]
             [clj-time.coerce :as c]
-            [clj-time.format :as f]
-            [clj-time.predicates :as pr]
             [inflacao-pedestal-service.database :as database]))
 
 (def links-vector ["http://ipeadata.gov.br/api/odata4/ValoresSerie(SERCODIGO='PRECOS12_IPCA12')",

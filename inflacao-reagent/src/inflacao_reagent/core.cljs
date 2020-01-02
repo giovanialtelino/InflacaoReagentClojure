@@ -60,15 +60,31 @@
            :min       "1979"
            :class     "input"
            :id        (str "ano-" id)
+           :placeholder "Ano"
            }])
 
+(defn valor-input []
+  [:div {:class "field"}
+   [:label {:class "label"} "Valor inicial para cálculo"]
+   [:input {:type "number"
+           :min "1"
+           :step "any"
+           :class "input"
+           :id "valor-inicial"
+           :placeholder "Valor para cálculo"}]])
+
 (defn date-field [id]
-  [:div.field.has-addons.has-addons-right
+  [:div.field.has-addons.has-addons-center
    [:p.control {:class "select"}
     [dropdown-selector-mes id]]
    [:p.control
     [input-selector-ano id]]
    ])
+
+(defn data-inicial-input []
+  [:div {:class "field"}
+   [:label {:class "label"} "Data Inicial"]
+   [date-field "inicial"]])
 
 (defn send-button-handler []
   (let [year-month (year-month-collector)]
@@ -76,23 +92,30 @@
 
 (defn send-button []
   [:div.control
-   [:button.button.is-link {:on-click send-button-handler} "Gerar Gráfico"]]
+   [:button.button.is-primary {:on-click send-button-handler} "Gerar Gráfico e Tabela"]]
   )
 
 (defn graph-field [])
 
 (defn home-page []
-  [:div {:class "container"}
-   [:h1 {:class "title"} "Calculadora de Inflação"]
-   [:div {:class "columns"}
-    [:div {:class "column"} [date-field 0]]
-    [:div {:class "column"} [date-field 1]]
-    [:div {:class "column"} [date-field 2]]
-    [:div {:class "column"} [date-field 3]]]
-   [:div {:class "columns"}
-    [:div {:clas "column"} [send-button]]]
-   [:div {:class "columns"}
-    [:div {:class "column"} [graph-field]]]])
+  [:div {:class "container is-fluid"}
+   [:h1 {:class "title"} "Calculadora de Inflação e Deflação"]
+   [:div {:class "columns is-centered"}
+    [:div {:class "column is-3"} [valor-input]]
+    [:div {:class "column is-3"} [data-inicial-input]]]
+   [:div {:class "columns is-centered"}
+    [:div {:class "column is-3"}
+     [:label {:class "label"}
+      "Datas para serem calculadas"]]]
+   [:div {:class "columns is-centered"}
+    [:div {:class "column is-3"} [date-field 0]]
+    [:div {:class "column is-3"} [date-field 1]]
+    [:div {:class "column is-3"} [date-field 2]]
+    [:div {:class "column is-3"} [date-field 3]]]
+   [:div {:class "columns is-centered"}
+    [:div {:class "column is-2"} [send-button]]]
+   [:div {:class "columns is-centered"}
+    [:div {:class "column is-12"} [graph-field]]]])
 
 ;; -------------------------
 ;; Initialize app
