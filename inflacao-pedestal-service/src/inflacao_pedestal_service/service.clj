@@ -12,7 +12,13 @@
 
 (defn home-page
   [request]
+  (println (:body request))
   (ring-resp/response "Hello World!"))
+
+(defn graph-generator
+  [request]
+  (println request)
+  (ring-resp/response request))
 
 ;; Defines "/" and "/about" routes with their associated :get handlers.
 ;; The interceptors defined after the verb map (e.g., {:get home-page}
@@ -21,7 +27,8 @@
 
 ;; Tabular routes
 (def routes #{["/" :get (conj common-interceptors `home-page)]
-              ["/about" :get (conj common-interceptors `about-page)]})
+              ["/about" :get (conj common-interceptors `about-page)]
+              ["/graphgen" :post (conj common-interceptors `graph-generator)]})
 
 ;; Map-based routes
 ;(def routes `{"/" {:interceptors [(body-params/body-params) http/html-body]

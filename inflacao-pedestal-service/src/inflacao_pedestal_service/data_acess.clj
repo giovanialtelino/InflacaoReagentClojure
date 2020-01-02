@@ -14,8 +14,6 @@
                    "http://ipeadata.gov.br/api/odata4/ValoresSerie(SERCODIGO='PRECOS12_INPC12')"
                   ])
 
-
-
 (defn get-data [link]
   (client/get link {:accept :json} true))
 

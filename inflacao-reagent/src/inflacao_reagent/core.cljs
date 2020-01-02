@@ -4,12 +4,11 @@
     [reagent.core :as r]
     [cljsjs.d3 :as d3]
     [cljs-http.client :as http]
-    [cljs.core.async :refer [<!]]
-    [cljs-time.core :as dt]))
+    [cljs.core.async :refer [<!]]))
 
 (def date-counter 4)
 
-(defn month-year-collector [i]
+(defn year-month-searcher [i]
        (str   (-> js/document
               (.getElementById (str "ano-" i))
               (.-value))
@@ -18,24 +17,21 @@
               (.getElementById (str "mes-" i))
               (.-value))))
 
-(defn send-stuff []
+(defn year-month-collector []
     (loop [i 0
            body []]
       (if (< i date-counter )
-        (do (println (month-year-collector i))
-            (recur (inc i) (conj body (month-year-collector i))))
+        (do
+            (recur (inc i) (conj body (year-month-searcher i))))
         body)))
 
-(defn format-organize-body [body]
-  (loop [i (count body)
-         format-body []]
-    (if (= 7 (count (nth i body)))
-      (recur (inc i)))))
+;http post the data to the api
+;return json and print to graph
 
-(defn temp []
-  (go (let [response (<! (http/get "http://localhost:8080/"
+(defn send-to-api [body]
+   (go (let [response (<! (http/get "https://webhook.site/bea212c0-497c-450a-a6be-361d7258434a"
                                    {:with-credetials? false
-                                    :body             ""}))]
+                                    :body      body}))]
         (prn (:status response))
         (prn (:body response)))))
 
@@ -74,9 +70,13 @@
     [input-selector-ano id]]
    ])
 
+(defn send-button-handler []
+  (let [year-month (year-month-collector)]
+    (send-to-api year-month)))
+
 (defn send-button []
   [:div.control
-   [:button.button.is-link {:on-click format-organize-body send-stuff} "Gerar Gráfico"]]
+   [:button.button.is-link {:on-click send-button-handler} "Gerar Gráfico"]]
   )
 
 (defn graph-field [])
