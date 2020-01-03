@@ -1,42 +1,16 @@
 (ns inflacao-reagent.core
   (:require-macros [cljs.core.async.macros :refer [go]])
   (:require
+    [inflacao-reagent.util :as utils]
+    [reitit.frontend :as rf]
+    [reitit.coercion :as rc]
+    [reitit.frontend.easy :as rfe]
+    [reitit.coercion.spec :as rss]
     [reagent.core :as r]
-    [cljsjs.d3 :as d3]
     [cljs-http.client :as http]
+    [fipp.edn :as fedn]
     [cljs.core.async :refer [<!]]))
 
-(def date-counter 4)
-
-(defn year-month-searcher [i]
-       (str   (-> js/document
-              (.getElementById (str "ano-" i))
-              (.-value))
-            "-"
-          (-> js/document
-              (.getElementById (str "mes-" i))
-              (.-value))))
-
-(defn year-month-collector []
-    (loop [i 0
-           body []]
-      (if (< i date-counter )
-        (do
-            (recur (inc i) (conj body (year-month-searcher i))))
-        body)))
-
-;http post the data to the api
-;return json and print to graph
-
-(defn send-to-api [body]
-   (go (let [response (<! (http/get "https://webhook.site/bea212c0-497c-450a-a6be-361d7258434a"
-                                   {:with-credetials? false
-                                    :body      body}))]
-        (prn (:status response))
-        (prn (:body response)))))
-
-;; -------------------------
-;; Views
 (defn dropdown-selector-mes [id]
   [:select
    {:id (str "mes-" id)}
@@ -87,17 +61,23 @@
    [date-field "inicial"]])
 
 (defn send-button-handler []
-  (let [year-month (year-month-collector)]
-    (send-to-api year-month)))
+  (let [year-month (utils/year-month-collector)]
+    (utils/send-to-api year-month)))
 
 (defn send-button []
   [:div.control
    [:button.button.is-primary {:on-click send-button-handler} "Gerar Gráfico e Tabela"]]
   )
 
-(defn graph-field [])
+(defn graph-field []
+  [:div "Hello graph page"])
 
-(defn home-page []
+(defn about-page []
+  [:div "Hello about page"])
+
+(defn xls-page [])
+
+(defn inflacao-deflacao-page []
   [:div {:class "container is-fluid"}
    [:h1 {:class "title"} "Calculadora de Inflação e Deflação"]
    [:div {:class "columns is-centered"}
@@ -115,13 +95,52 @@
    [:div {:class "columns is-centered"}
     [:div {:class "column is-2"} [send-button]]]
    [:div {:class "columns is-centered"}
-    [:div {:class "column is-12"} [graph-field]]]])
+    [:div {:class "column is-12"} [graph-field]]]
+   ]
+  )
 
-;; -------------------------
-;; Initialize app
+(defn navbar []
+  [:nav.navbar.is-fixed-top {:role "navigation" :aria-label "main navigation"}
+   [:div.navbar-brand
+    [:a.navbar-item
+     ]
+    [:a.navbar-burger.burger {:role "button" :aria-label "menu" :aria-expanded "false" :data-target "navbarBasicExample"}
+     [:span {:aria-hidden "true"}]
+     [:span {:aria-hidden "true"}]
+     [:span {:aria-hidden "true"}]]]
+   [:div#navbarBasicExample.navbar-menu
+    [:div.navbar-start
+     [:a.navbar-item  {:href (rfe/href ::calculadora)} "Calculadora"]
+     [:a.navbar-item {:href (rfe/href ::xls)} "Planilhas e CSVs"]
+    ]
+    [:div.navbar-end
+     [:a.navbar-item {:href (rfe/href ::sobre)} "Sobre"]
+    ]]])
 
-(defn mount-root []
-  (r/render [home-page] (.getElementById js/document "app")))
+(defonce match (r/atom nil))
+
+(defn current-page []
+  [:div [navbar]
+   (if @match
+     (let [view (:view (:data @match))]
+       [view @match]))
+   ])
+
+(def routes
+  [["/"
+    {:name ::calculadora
+     :view inflacao-deflacao-page}]
+   ["/sobre"
+    {:name ::sobre
+     :view about-page}]
+   ["/xls"
+    {:name ::xls
+     :view xls-page}]])
 
 (defn init! []
-  (mount-root))
+  (rfe/start!
+    (rf/router routes {:data {:coercion rss/coercion}})
+    (fn [m] (reset! match m))
+    ;; set to false to enable HistoryAPI
+    {:use-fragment true})
+  (r/render [current-page] (.getElementById js/document "app")))

@@ -47,6 +47,7 @@
     <orderEntry type="library" name="Leiningen: co.deps/ring-etag-middleware:0.2.0" level="project" />
     <orderEntry type="library" name="Leiningen: com.andrewmcveigh/cljs-time:0.5.2" level="project" />
     <orderEntry type="library" name="Leiningen: com.atlassian.commonmark/commonmark:0.8.0" level="project" />
+    <orderEntry type="library" name="Leiningen: com.bhauman/spell-spec:0.1.1" level="project" />
     <orderEntry type="library" name="Leiningen: com.cemerick/clojurescript.test:0.0.4" level="project" />
     <orderEntry type="library" name="Leiningen: com.cemerick/pomegranate:0.3.1" level="project" />
     <orderEntry type="library" name="Leiningen: com.cemerick/url:0.1.1" level="project" />
@@ -55,9 +56,12 @@
     <orderEntry type="library" name="Leiningen: com.cognitect/transit-cljs:0.8.256" level="project" />
     <orderEntry type="library" name="Leiningen: com.cognitect/transit-java:0.8.332" level="project" />
     <orderEntry type="library" name="Leiningen: com.cognitect/transit-js:0.8.846" level="project" />
+    <orderEntry type="library" name="Leiningen: com.fasterxml.jackson.core/jackson-annotations:2.10.0" level="project" />
     <orderEntry type="library" name="Leiningen: com.fasterxml.jackson.core/jackson-core:2.9.6" level="project" />
+    <orderEntry type="library" name="Leiningen: com.fasterxml.jackson.core/jackson-databind:2.10.0" level="project" />
     <orderEntry type="library" name="Leiningen: com.fasterxml.jackson.dataformat/jackson-dataformat-cbor:2.9.6" level="project" />
     <orderEntry type="library" name="Leiningen: com.fasterxml.jackson.dataformat/jackson-dataformat-smile:2.9.6" level="project" />
+    <orderEntry type="library" name="Leiningen: com.fasterxml.jackson.datatype/jackson-datatype-jsr310:2.10.0" level="project" />
     <orderEntry type="library" name="Leiningen: com.google.code.findbugs/jsr305:3.0.1" level="project" />
     <orderEntry type="library" name="Leiningen: com.google.code.gson/gson:2.7" level="project" />
     <orderEntry type="library" name="Leiningen: com.google.errorprone/error_prone_annotations:2.0.18" level="project" />
@@ -83,8 +87,10 @@
     <orderEntry type="library" name="Leiningen: crypto-equality:1.0.0" level="project" />
     <orderEntry type="library" name="Leiningen: crypto-random:1.2.0" level="project" />
     <orderEntry type="library" name="Leiningen: environ:1.1.0" level="project" />
+    <orderEntry type="library" name="Leiningen: expound:0.7.2" level="project" />
     <orderEntry type="library" name="Leiningen: figwheel-sidecar:0.5.19" level="project" />
     <orderEntry type="library" name="Leiningen: figwheel:0.5.19" level="project" />
+    <orderEntry type="library" name="Leiningen: fipp:0.6.14" level="project" />
     <orderEntry type="library" name="Leiningen: hawk:0.2.11" level="project" />
     <orderEntry type="library" name="Leiningen: hiccup:2.0.0-alpha2" level="project" />
     <orderEntry type="library" name="Leiningen: hickory:0.7.1" level="project" />
@@ -109,11 +115,34 @@
     <orderEntry type="library" name="Leiningen: irresponsible/tentacles:0.6.3" level="project" />
     <orderEntry type="library" name="Leiningen: javax.servlet/javax.servlet-api:3.1.0" level="project" />
     <orderEntry type="library" name="Leiningen: joda-time:2.8.2" level="project" />
+    <orderEntry type="library" name="Leiningen: lambdaisland/deep-diff:0.0-47" level="project" />
     <orderEntry type="library" name="Leiningen: manifold:0.1.8" level="project" />
     <orderEntry type="library" name="Leiningen: markdown-clj:1.10.0" level="project" />
     <orderEntry type="library" name="Leiningen: markdown-to-hiccup:0.6.2" level="project" />
     <orderEntry type="library" name="Leiningen: medley:1.0.0" level="project" />
+    <orderEntry type="library" name="Leiningen: meta-merge:1.0.0" level="project" />
     <orderEntry type="library" name="Leiningen: metasoarous/oz:1.6.0-alpha5" level="project" />
+    <orderEntry type="library" name="Leiningen: metosin/jsonista:0.2.5" level="project" />
+    <orderEntry type="library" name="Leiningen: metosin/muuntaja:0.6.5" level="project" />
+    <orderEntry type="library" name="Leiningen: metosin/reitit-core:0.3.10" level="project" />
+    <orderEntry type="library" name="Leiningen: metosin/reitit-dev:0.3.10" level="project" />
+    <orderEntry type="library" name="Leiningen: metosin/reitit-frontend:0.3.10" level="project" />
+    <orderEntry type="library" name="Leiningen: metosin/reitit-http:0.3.10" level="project" />
+    <orderEntry type="library" name="Leiningen: metosin/reitit-interceptors:0.3.10" level="project" />
+    <orderEntry type="library" name="Leiningen: metosin/reitit-middleware:0.3.10" level="project" />
+    <orderEntry type="library" name="Leiningen: metosin/reitit-ring:0.3.10" level="project" />
+    <orderEntry type="library" name="Leiningen: metosin/reitit-schema:0.3.10" level="project" />
+    <orderEntry type="library" name="Leiningen: metosin/reitit-sieppari:0.3.10" level="project" />
+    <orderEntry type="library" name="Leiningen: metosin/reitit-spec:0.3.10" level="project" />
+    <orderEntry type="library" name="Leiningen: metosin/reitit-swagger-ui:0.3.10" level="project" />
+    <orderEntry type="library" name="Leiningen: metosin/reitit-swagger:0.3.10" level="project" />
+    <orderEntry type="library" name="Leiningen: metosin/reitit:0.3.10" level="project" />
+    <orderEntry type="library" name="Leiningen: metosin/ring-swagger-ui:2.2.10" level="project" />
+    <orderEntry type="library" name="Leiningen: metosin/schema-tools:0.12.0" level="project" />
+    <orderEntry type="library" name="Leiningen: metosin/sieppari:0.0.0-alpha7" level="project" />
+    <orderEntry type="library" name="Leiningen: metosin/spec-tools:0.10.0" level="project" />
+    <orderEntry type="library" name="Leiningen: mvxcvi/arrangement:1.2.0" level="project" />
+    <orderEntry type="library" name="Leiningen: mvxcvi/puget:1.1.2" level="project" />
     <orderEntry type="library" name="Leiningen: net.cgrand/parsley:0.9.3" level="project" />
     <orderEntry type="library" name="Leiningen: net.cgrand/regex:1.1.0" level="project" />
     <orderEntry type="library" name="Leiningen: net.cgrand/sjacket:0.1.1" level="project" />
@@ -144,6 +173,7 @@
     <orderEntry type="library" name="Leiningen: org.clojure/core.async:0.6.532" level="project" />
     <orderEntry type="library" name="Leiningen: org.clojure/core.cache:0.8.2" level="project" />
     <orderEntry type="library" name="Leiningen: org.clojure/core.memoize:0.8.2" level="project" />
+    <orderEntry type="library" name="Leiningen: org.clojure/core.rrb-vector:0.0.13" level="project" />
     <orderEntry type="library" name="Leiningen: org.clojure/core.specs.alpha:0.2.44" level="project" />
     <orderEntry type="library" name="Leiningen: org.clojure/data.codec:0.1.0" level="project" />
     <orderEntry type="library" name="Leiningen: org.clojure/data.json:0.2.6" level="project" />
@@ -194,6 +224,7 @@
     <orderEntry type="library" name="Leiningen: pathetic:0.5.0" level="project" />
     <orderEntry type="library" name="Leiningen: potemkin:0.4.5" level="project" />
     <orderEntry type="library" name="Leiningen: primitive-math:0.1.6" level="project" />
+    <orderEntry type="library" name="Leiningen: prismatic/schema:1.1.11" level="project" />
     <orderEntry type="library" name="Leiningen: quoin:0.1.2" level="project" />
     <orderEntry type="library" name="Leiningen: reagent:0.9.0-rc3" level="project" />
     <orderEntry type="library" name="Leiningen: riddley:0.1.12" level="project" />
@@ -213,6 +244,7 @@
     <orderEntry type="library" name="Leiningen: slingshot:0.12.2" level="project" />
     <orderEntry type="library" name="Leiningen: strictly-specking-standalone:0.1.1" level="project" />
     <orderEntry type="library" name="Leiningen: suspendable:0.1.1" level="project" />
+    <orderEntry type="library" name="Leiningen: tech.droit/clj-diff:1.0.1" level="project" />
     <orderEntry type="library" name="Leiningen: tigris:0.1.1" level="project" />
     <orderEntry type="library" name="Leiningen: viebel/codox-klipse-theme:0.0.1" level="project" />
   </component>
