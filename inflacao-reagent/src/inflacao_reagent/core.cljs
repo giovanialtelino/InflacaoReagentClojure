@@ -61,8 +61,14 @@
    [date-field "inicial"]])
 
 (defn send-button-handler []
-  (let [year-month (utils/year-month-collector)]
-    (utils/send-to-api year-month)))
+  (let [year-month (utils/year-month-collector)
+        valor-inicial (int (utils/get-valor-inicial))
+        mes-ano-inicial (utils/get-year-month-inicial)]
+    (if (false? (number? valor-inicial))
+      (js/alert "Insira um valor para cálculo")
+      (if (false? (= 7 (count mes-ano-inicial)))
+        (js/alert "Selecione um mês e ano inicial")
+        (utils/send-to-api year-month valor-inicial mes-ano-inicial)))))
 
 (defn send-button []
   [:div.control

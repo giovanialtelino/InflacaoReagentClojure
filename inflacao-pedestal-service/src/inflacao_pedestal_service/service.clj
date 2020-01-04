@@ -12,9 +12,14 @@
 (defn graph-generator
   [request]
   (let [json-params (:json-params request)
-        response-body (deflate/generate-graph json-params)]
+        valor (:valor json-params)
+        inicio (:inicio json-params)
+        fins (:fins json-params)
+        d3-graph (deflate/generate-graph valor inicio fins)]
+    (print "---------------- PROCESS DONE ----------------------------")
+    (println d3-graph)
   {:status 200
-   :body response-body}))
+   :body d3-graph}))
 
 (defn xls-generator
   [request]
