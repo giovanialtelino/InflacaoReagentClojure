@@ -136,6 +136,19 @@
                    :nivnome NIVNOME
                    :tercodigo TERCODIGO}))))
 
-(defn get-value-date-table [date table]
-  (let [query (str "SELECT valvalor FROM " table " WHERE valdata = ?")]
-    (jdbc/query pg-db [query date])))
+(defn get-value-date-table [table date]
+    (let [query (str "SELECT valvalor FROM " table " WHERE valdata = ? LIMIT 1")
+          result (jdbc/query pg-db [query date])]
+      (if (< 0 (count result))
+        (:valvalor (nth result 0))
+        0
+        )))
+
+(defn get-value-date-all-table [date]
+  (let [all-values {:precos12_inpc12 (get-value-date-table "precos12_inpc12" date )
+                    :igp12_ipc12 (get-value-date-table "igp12_ipc12" date )
+                    :igp12_igpdi12 (get-value-date-table "igp12_igpdi12" date )
+                    :igp12_igpm12 (get-value-date-table "igp12_igpm12" date )
+                    :precos12_ipca12 (get-value-date-table "precos12_ipca12" date)}]
+    all-values))
+
