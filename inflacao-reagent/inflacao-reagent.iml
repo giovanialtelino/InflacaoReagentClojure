@@ -33,6 +33,7 @@
     <orderEntry type="library" name="Leiningen: clj-time:0.11.0" level="project" />
     <orderEntry type="library" name="Leiningen: clj-tuple:0.2.2" level="project" />
     <orderEntry type="library" name="Leiningen: cljs-http:0.1.46" level="project" />
+    <orderEntry type="library" name="Leiningen: cljsjs/chartjs:2.9.3-0" level="project" />
     <orderEntry type="library" name="Leiningen: cljsjs/d3:5.12.0-0" level="project" />
     <orderEntry type="library" name="Leiningen: cljsjs/react-dom-server:16.9.0-0" level="project" />
     <orderEntry type="library" name="Leiningen: cljsjs/react-dom:16.9.0-0" level="project" />

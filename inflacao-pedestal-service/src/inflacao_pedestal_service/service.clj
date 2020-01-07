@@ -2,6 +2,7 @@
   (:require [io.pedestal.http :as http]
             [io.pedestal.http.route :as route]
             [io.pedestal.http.body-params :as body-params]
+            [cheshire.core :as cs]
             [inflacao-pedestal-service.deflate :as deflate]))
 
 (defn home-page
@@ -15,7 +16,8 @@
         valor (:valor json-params)
         inicio (:inicio json-params)
         fins (:fins json-params)
-        d3-graph (deflate/generate-graph valor inicio fins)]
+        d3-graph (deflate/generate-graph valor inicio fins)
+        d3-json (cs/generate-string d3-graph)]
     (print "---------------- PROCESS DONE ----------------------------")
     (println d3-graph)
   {:status 200

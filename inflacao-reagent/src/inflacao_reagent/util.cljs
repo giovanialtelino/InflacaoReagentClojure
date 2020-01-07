@@ -1,6 +1,7 @@
 (ns inflacao-reagent.util
   (:require-macros [cljs.core.async.macros :refer [go]])
   (:require
+    [inflacao-reagent.core :as c]
     [cljs-http.client :as http]
     [cljs.core.async :refer [<!]]))
 
@@ -39,13 +40,11 @@
 
 (defn send-to-api [mes-ano-diversos valor-inicial mes-ano-inicial]
   (let [body {:valor valor-inicial
-                   :inicio mes-ano-inicial
-                   :fins mes-ano-diversos}
-        json-body (.stringify js/JSON (clj->js body))]
-    (println json-body)
+              :inicio mes-ano-inicial
+              :fins mes-ano-diversos}]
     (go (let [response (<! (http/post "http://localhost:8080/graphgen"
                                      {:with-credetials? false
                                       :json-params      body}))]
-          (prn (:status response))
-          (prn (:body response))))))
+          (c/show-chart [mes-ano-diversos mes-ano-inicial valor-inicial (:body response)])))))
+
 

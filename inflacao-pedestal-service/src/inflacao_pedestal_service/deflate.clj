@@ -5,11 +5,6 @@
             [clj-time.coerce :as c]))
 
 (defn deflate [index-1 index-2 value]
-  (println "----------")
-  (println index-1)
-  (println index-2)
-  (println value)
-  (println "----------")
       (if (> index-1 0 )
       (* (with-precision 8 (/ index-2 index-1)) value)
       0))

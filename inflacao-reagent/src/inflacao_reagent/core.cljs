@@ -9,6 +9,7 @@
     [reagent.core :as r]
     [cljs-http.client :as http]
     [fipp.edn :as fedn]
+    [cljsjs.chartjs]
     [cljs.core.async :refer [<!]]))
 
 (defn dropdown-selector-mes [id]
@@ -60,6 +61,69 @@
    [:label {:class "label"} "Data Inicial"]
    [date-field "inicial"]])
 
+(defn clean-dates [dates]
+  (loop [i 0
+         clean-dates []]
+    (if (< i (count dates))
+     (if (= 7 (count (nth dates i)))
+      (recur (inc i) (conj clean-dates (nth dates i)))
+      (recur (inc i) clean-dates))
+       clean-dates)))
+
+(defn process-values-dates [values val-inicio dates index]
+  (prn values)
+  (prn val-inicio)
+  (prn dates)
+  (prn index)
+  (let [date-counter (count dates)]
+    (loop [i 0
+           values-cleaned [val-inicio]]
+      (if (< i date-counter)
+        (recur (inc i) (conj values-cleaned (get-in values [(keyword (nth dates i)) index])))
+        values-cleaned))))
+
+(defn dataset-generator [dates val-inicio values]
+  (let [
+        precos12_inpc12 (process-values-dates values val-inicio dates :precos12_inpc12)
+        igp12_ipc12 (process-values-dates values val-inicio dates :igp12_ipc12)
+        igp12_igpdi12  (process-values-dates values val-inicio dates :igp12_igpdi12)
+        igp12_igpm12  (process-values-dates values val-inicio dates :igp12_igpm12)
+        precos12_ipca12  (process-values-dates values val-inicio dates :precos12_ipca12)]
+    (prn precos12_inpc12)
+  [{:data precos12_inpc12
+   :label "INPC"
+   :borderColor "#E1F5FE" :backgroundColor "#E1F5FE" :fill "false"
+    :order 0}
+   {:data precos12_ipca12
+    :label "IPCA"
+    :borderColor "#039BE5" :backgroundColor "#039BE5" :fill "false"
+    :order 1}
+  {:data igp12_ipc12
+   :label "IPC"
+   :borderColor "#81D4FA" :backgroundColor "#81D4FA" :fill "false"
+   :order 2}
+  {:data igp12_igpdi12
+   :label "IGPDI"
+   :borderColor "#29B6F6" :backgroundColor "#29B6F6" :fill "false"
+   :order 3}
+  {:data igp12_igpm12
+   :label "IGPM"
+   :borderColor "#0277BD" :backgroundColor "#0277BD" :fill "false"
+   :order 4}
+  ]))
+
+(defn show-chart
+  [data]
+   (let [
+          dates (clean-dates (nth data 0))
+          dates-inicio (into [] (concat [(nth data 1)] dates))
+          dataset (dataset-generator dates (nth data 2) (nth data 3))
+          context (.getContext (.getElementById js/document "rev-chartjs") "2d")
+          chart-data {:type "line"
+                      :responsive "true"
+                       :data {:labels dates-inicio :datasets dataset }}]
+    (js/Chart. context (clj->js chart-data))))
+
 (defn send-button-handler []
   (let [year-month (utils/year-month-collector)
         valor-inicial (int (utils/get-valor-inicial))
@@ -75,8 +139,14 @@
    [:button.button.is-primary {:on-click send-button-handler} "Gerar Gráfico e Tabela"]]
   )
 
-(defn graph-field []
-  [:div "Hello graph page"])
+(defn rev-chartjs-component
+  []
+  (r/create-class
+    {:component-did-mount #(show-chart nil)
+     :display-name        "chartjs-component"
+     :reagent-render      (fn []
+                            [:canvas {:id "rev-chartjs" :width "700" :height "250"
+                                      }])}))
 
 (defn about-page []
   [:div "Hello about page"])
@@ -101,7 +171,7 @@
    [:div {:class "columns is-centered"}
     [:div {:class "column is-2"} [send-button]]]
    [:div {:class "columns is-centered"}
-    [:div {:class "column is-12"} [graph-field]]]
+    [:div {:class "column is-12"} [rev-chartjs-component]]]
    ]
   )
 

@@ -16,6 +16,7 @@
                  [metosin/reitit "0.3.10"]
                  [metosin/reitit-spec "0.3.10"]
                  [fipp "0.6.14"]
+                 [cljsjs/chartjs "2.9.3-0"]
                  [metosin/reitit-frontend "0.3.10"]]
 
   :plugins [[lein-cljsbuild "1.1.7"]
