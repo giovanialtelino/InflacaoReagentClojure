@@ -5,9 +5,14 @@
             [clj-time.coerce :as c]))
 
 (defn deflate [index-1 index-2 value]
-  (if (> index-1 0 )
-    (* (with-precision 2 (/ index-2 index-1)) value)
-    0))
+  (println "----------")
+  (println index-1)
+  (println index-2)
+  (println value)
+  (println "----------")
+      (if (> index-1 0 )
+      (* (with-precision 8 (/ index-2 index-1)) value)
+      0))
 
 (defn date-cleaner [date]
   (let [year (Integer/parseInt (subs date 0 4))
@@ -22,7 +27,9 @@
     (loop [i 0
            all-fins {}]
       (if (< i fins-count)
+        (if (= 7 (count (nth fins i)))
           (recur (inc i) (conj all-fins { (keyword (nth fins i)) (database/get-value-date-all-table (date-cleaner (nth fins i)))}))
+          (recur (inc i) all-fins))
           all-fins))))
 
 (defn deflate-one-full-date [valor valores-inicio valores-fim data-inicio data-fim]
@@ -45,7 +52,9 @@
     (loop [i 0
            deflated {}]
       (if (< i final-count)
-        (recur (inc i) (conj deflated (deflate-one-full-date valor ((keyword inicio) (nth valores-inicio 0)) ((keyword (nth fins i)) valores-finais ) inicio (nth fins i))))
+        (if (= 7 (count (nth fins i)))
+          (recur (inc i) (conj deflated (deflate-one-full-date valor ((keyword inicio) (nth valores-inicio 0)) ((keyword (nth fins i)) valores-finais ) inicio (nth fins i))))
+          (recur (inc i) deflated))
         deflated ))))
 
 (defn generate-graph [valor inicio fins]
