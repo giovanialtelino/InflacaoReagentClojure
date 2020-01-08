@@ -37,6 +37,7 @@
     <orderEntry type="library" name="Leiningen: cljsjs/d3:5.12.0-0" level="project" />
     <orderEntry type="library" name="Leiningen: cljsjs/react-dom-server:16.9.0-0" level="project" />
     <orderEntry type="library" name="Leiningen: cljsjs/react-dom:16.9.0-0" level="project" />
+    <orderEntry type="library" name="Leiningen: cljsjs/react-table:6.8.6-0" level="project" />
     <orderEntry type="library" name="Leiningen: cljsjs/react:16.9.0-0" level="project" />
     <orderEntry type="library" name="Leiningen: cljsjs/semantic-ui-react:0.88.1-0" level="project" />
     <orderEntry type="library" name="Leiningen: cljsjs/vega-embed:4.0.0-0" level="project" />

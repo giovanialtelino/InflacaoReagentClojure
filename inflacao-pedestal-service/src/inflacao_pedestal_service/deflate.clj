@@ -14,9 +14,6 @@
         month (Integer/parseInt (subs date 5 7))]
     (c/to-sql-date (t/date-time year month))))
 
-(defn check-if-database-is-updated []
-  (data-access/access-data))
-
 (defn get-value-all-fins [fins]
   (let [fins-count (count fins)]
     (loop [i 0

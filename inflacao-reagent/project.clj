@@ -16,6 +16,7 @@
                  [metosin/reitit "0.3.10"]
                  [metosin/reitit-spec "0.3.10"]
                  [fipp "0.6.14"]
+                 [cljsjs/react-table "6.8.6-0"]
                  [cljsjs/chartjs "2.9.3-0"]
                  [metosin/reitit-frontend "0.3.10"]]
 
@@ -31,7 +32,6 @@
   :resource-paths ["public"]
 
   :figwheel {:http-server-root "."
-             :nrepl-port 7002
              :nrepl-middleware [cider.piggieback/wrap-cljs-repl]
              :css-dirs ["public/css"]}
 
