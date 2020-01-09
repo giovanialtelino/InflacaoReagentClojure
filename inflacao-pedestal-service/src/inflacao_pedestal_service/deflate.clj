@@ -6,7 +6,7 @@
 
 (defn deflate [index-1 index-2 value]
       (if (> index-1 0 )
-      (* (with-precision 8 (/ index-2 index-1)) value)
+      (*  (/ index-2 index-1) value)
       0))
 
 (defn date-cleaner [date]

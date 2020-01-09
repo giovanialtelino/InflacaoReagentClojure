@@ -3,7 +3,8 @@
             [io.pedestal.http.route :as route]
             [io.pedestal.http.body-params :as body-params]
             [cheshire.core :as cs]
-            [inflacao-pedestal-service.deflate :as deflate]))
+            [inflacao-pedestal-service.deflate :as deflate]
+            [inflacao-pedestal-service.database :as database]))
 
 (defn home-page
   [request]
@@ -16,23 +17,21 @@
         valor (:valor json-params)
         inicio (:inicio json-params)
         fins (:fins json-params)
-        d3-graph (deflate/generate-graph valor inicio fins)
-        d3-json (cs/generate-string d3-graph)]
-    (print "---------------- PROCESS DONE ----------------------------")
-    (println d3-graph)
+        d3-graph (deflate/generate-graph valor inicio fins)]
   {:status 200
    :body d3-graph}))
 
 (defn xls-generator
   [request]
+  (let [all-used-data (database/get-all-use-data)]
   {:status 200
-   :body "okay"})
+   :body all-used-data}))
 
 (def common-interceptors [(body-params/body-params) http/html-body])
 
 (def routes #{["/" :get (conj common-interceptors `home-page)]
               ["/graphgen" :post (conj common-interceptors `graph-generator)]
-              ["/xlsgen" :post (conj common-interceptors `xls-generator)]})
+              ["/xlsgen" :get (conj common-interceptors `xls-generator)]})
 
 (def service {:env :prod
               ::http/routes routes

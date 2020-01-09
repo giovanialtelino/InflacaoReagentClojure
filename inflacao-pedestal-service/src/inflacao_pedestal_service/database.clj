@@ -17,7 +17,7 @@
 (def create-table-precos12_ipca12
   (jdbc/create-table-ddl :precos12_ipca12
                          [[:valdata :date :primary :key]
-                           [:valvalor :decimal :not :null]
+                           [:valvalor :float :not :null]
                            [:nivnome "varchar(32)"]
                            [:tercodigo "varchar(32)"]]))
 
@@ -30,7 +30,7 @@
 (def create-table-igp12_igpm12
   (jdbc/create-table-ddl :igp12_igpm12
                          [[:valdata :date :primary :key]
-                          [:valvalor :decimal :not :null]
+                          [:valvalor :float :not :null]
                           [:nivnome "varchar(32)"]
                           [:tercodigo "varchar(32)"]]))
 
@@ -43,7 +43,7 @@
 (def create-table-igp12_igpdi12
   (jdbc/create-table-ddl :igp12_igpdi12
                          [[:valdata :date :primary :key]
-                          [:valvalor :decimal :not :null]
+                          [:valvalor :float :not :null]
                           [:nivnome "varchar(32)"]
                           [:tercodigo "varchar(32)"]]))
 
@@ -56,7 +56,7 @@
 (def create-table-igp12_ipc12
   (jdbc/create-table-ddl :igp12_ipc12
                          [[:valdata :date :primary :key]
-                          [:valvalor :decimal :not :null]
+                          [:valvalor :float :not :null]
                           [:nivnome "varchar(32)"]
                           [:tercodigo "varchar(32)"]]))
 
@@ -69,7 +69,7 @@
 (def create-table-precos12_inpc12
   (jdbc/create-table-ddl :precos12_inpc12
                          [[:valdata :date :primary :key]
-                          [:valvalor :decimal :not :null]
+                          [:valvalor :float :not :null]
                           [:nivnome "varchar(32)"]
                           [:tercodigo "varchar(32)"]]))
 
@@ -150,5 +150,21 @@
                     :igp12_igpdi12 (get-value-date-table "igp12_igpdi12" date )
                     :igp12_igpm12 (get-value-date-table "igp12_igpm12" date )
                     :precos12_ipca12 (get-value-date-table "precos12_ipca12" date)}]
+    all-values))
+
+(defn get-value-all-data [table]
+  (let [query (str "SELECT TO_CHAR(valvalor::FLOAT, 'FM999999990.00000000') AS Valor, TO_CHAR(valdata, 'dd/mm/yyyy') AS Data FROM " table " ORDER BY valdata DESC")
+        result (jdbc/query pg-db [query])]
+    (prn result)
+    result
+    ))
+
+(defn get-all-use-data []
+  (let [all-values {:precos12_inpc12 (get-value-all-data "precos12_inpc12"  )
+                    :igp12_ipc12 (get-value-all-data "igp12_ipc12"  )
+                    :igp12_igpdi12 (get-value-all-data "igp12_igpdi12"  )
+                    :igp12_igpm12 (get-value-all-data "igp12_igpm12"  )
+                    :precos12_ipca12 (get-value-all-data "precos12_ipca12" )
+                    :last-update (.format (java.text.SimpleDateFormat. "dd/MM/yyyy") (get-last-update))}]
     all-values))
 

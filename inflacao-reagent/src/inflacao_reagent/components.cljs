@@ -61,6 +61,6 @@
 
 (defn send-button []
   [:div.control
-   [:button.button.is-primary {:on-click  send-button-func}  "Gerar Gráfico e Tabela"]]
+   [:button.button.is-primary {:on-click  send-button-func}  "Gerar Gráfico"]]
   )
 

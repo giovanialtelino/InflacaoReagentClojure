@@ -3,11 +3,12 @@
   (:require
     [cljsjs.chartjs]
     [cljs-http.client :as http]
+    [cljsjs.react-table]
+    [reagent.core :as r]
+    [inflacao-reagent.xls-page :as xls]
     [cljs.core.async :refer [<!]]))
 
 (def date-counter 4)
-
-
 
 (defn get-valor-inicial []
     (-> js/document
@@ -94,10 +95,32 @@
         context (.getContext (.getElementById js/document "rev-chartjs") "2d")
         chart-data {:type "line"
                     :options {:responsive true
-                              :maintainAspectRatio true
+                              :maintainAspectRatio false
+                              :title {:display true
+                                      :text "Inflação - Deflação"}
+                              :tooltips {:mode "index"
+                                         :intersect false}
+                              :hover {:mode "nearest"
+                                      :intersect true
+                                      }
                               }
+
+
                     :data {:labels dates-inicio :datasets dataset }}]
     (js/Chart. context (clj->js chart-data))))
+
+(def ReactTable (r/adapt-react-class (aget js/ReactTable "default")))
+
+(defn my-table-component [data]
+  (prn data)
+  [:table.table [ReactTable {:data data
+                             :columns [
+                                       {:Header "Hello" :columns[ {:Header "first name"  :accessor "0" }
+                                                                 {:Header "second name" :accessor "1" }]}
+                                       ]
+                             :showPagination false
+                             :defaultPageSize 4
+                             }]])
 
 (defn send-to-api [mes-ano-diversos valor-inicial mes-ano-inicial]
   (let [body {:valor valor-inicial
@@ -106,7 +129,8 @@
     (go (let [response (<! (http/post "http://localhost:8080/graphgen"
                                       {:with-credetials? false
                                        :json-params      body}))]
-         (chart-component [mes-ano-diversos mes-ano-inicial valor-inicial (:body response)])))))
+          ;          (my-table [mes-ano-diversos mes-ano-inicial valor-inicial (:body response)])
+          (chart-component [mes-ano-diversos mes-ano-inicial valor-inicial (:body response)])))))
 
 (defn send-button-handler []
   (let [year-month (year-month-collector)
@@ -117,4 +141,6 @@
       (if (false? (= 7 (count mes-ano-inicial)))
         (js/alert "Selecione um mês e ano inicial")
          (send-to-api year-month valor-inicial mes-ano-inicial)))))
+
+
 
