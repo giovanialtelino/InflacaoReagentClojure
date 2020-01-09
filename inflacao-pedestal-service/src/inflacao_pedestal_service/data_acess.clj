@@ -2,6 +2,7 @@
   (:require [cheshire.core :refer :all]
             [clj-http.client :as client]
             [clj-time.coerce :as c]
+            [clj-time.core :as t]
             [inflacao-pedestal-service.database :as database]))
 
 (def links-vector ["http://ipeadata.gov.br/api/odata4/ValoresSerie(SERCODIGO='PRECOS12_IPCA12')",
@@ -20,7 +21,7 @@
 ;;not the best.......
 (defn update-date [data]
   (let [data (:VALDATA data)]
-    (c/to-sql-date(subs data 0 10))))
+    (c/to-sql-date (t/plus (c/to-date-time (subs data 0 10)) (t/hours 12)))))
 
 (defn update-data [data]
   (let [data-size (count data)]

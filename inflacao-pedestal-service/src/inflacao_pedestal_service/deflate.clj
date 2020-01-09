@@ -12,7 +12,7 @@
 (defn date-cleaner [date]
   (let [year (Integer/parseInt (subs date 0 4))
         month (Integer/parseInt (subs date 5 7))]
-    (c/to-sql-date (t/date-time year month))))
+    (c/to-sql-date (t/date-time year month 1))))
 
 (defn get-value-all-fins [fins]
   (let [fins-count (count fins)]

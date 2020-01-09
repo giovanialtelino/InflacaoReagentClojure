@@ -1,6 +1,7 @@
 (ns inflacao-pedestal-service.database
   (:require
     [clojure.java.jdbc :as jdbc]
+    [java-time :as jt]
     [clj-time.core :as t]
     [clj-time.coerce :as c]
     [clojure.string :as string]))
@@ -137,15 +138,16 @@
                    :tercodigo TERCODIGO}))))
 
 (defn get-value-date-table [table date]
-    (let [query (str "SELECT valvalor FROM " table " WHERE valdata = ? LIMIT 1")
-          result (jdbc/query pg-db [query date])]
+    (let [conv-date (jt/local-date date)
+          query (str "SELECT valvalor FROM " table " WHERE valdata =  ? LIMIT 1")
+          result (jdbc/query pg-db [query conv-date])]
       (if (< 0 (count result))
         (:valvalor (nth result 0))
         0
         )))
 
 (defn get-value-date-all-table [date]
-  (let [all-values {:precos12_inpc12 (get-value-date-table "precos12_inpc12" date )
+    (let [ all-values {:precos12_inpc12 (get-value-date-table "precos12_inpc12" date )
                     :igp12_ipc12 (get-value-date-table "igp12_ipc12" date )
                     :igp12_igpdi12 (get-value-date-table "igp12_igpdi12" date )
                     :igp12_igpm12 (get-value-date-table "igp12_igpm12" date )
@@ -160,6 +162,7 @@
     ))
 
 (defn get-all-use-data []
+
   (let [all-values {:precos12_inpc12 (get-value-all-data "precos12_inpc12"  )
                     :igp12_ipc12 (get-value-all-data "igp12_ipc12"  )
                     :igp12_igpdi12 (get-value-all-data "igp12_igpdi12"  )
