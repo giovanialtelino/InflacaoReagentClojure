@@ -9,6 +9,9 @@
       (*  (/ index-2 index-1) value)
       0))
 
+(defn front-end-date-parser [unparsed-date]
+  (str unparsed-date "-01"))
+
 (defn date-cleaner [date]
   (let [year (Integer/parseInt (subs date 0 4))
         month (Integer/parseInt (subs date 5 7))]
@@ -20,7 +23,8 @@
            all-fins {}]
       (if (< i fins-count)
         (if (= 7 (count (nth fins i)))
-          (recur (inc i) (conj all-fins { (keyword (nth fins i)) (database/get-value-date-all-table (date-cleaner (nth fins i)))}))
+          (recur (inc i) (conj all-fins {(keyword (nth fins i))
+                                         (database/get-value-date-all-table (front-end-date-parser (nth fins i)))}))
           (recur (inc i) all-fins))
           all-fins))))
 
@@ -50,7 +54,7 @@
         deflated ))))
 
 (defn generate-graph [valor inicio fins]
-     (let [get-valores-inicio (conj [] {(keyword inicio)(database/get-value-date-all-table (date-cleaner inicio))})
+     (let [get-valores-inicio (conj [] {(keyword inicio)(database/get-value-date-all-table (front-end-date-parser inicio))})
            get-value-all-fins (get-value-all-fins fins)
            deflated (deflate-all-values-got valor get-valores-inicio get-value-all-fins inicio fins)]
     deflated))

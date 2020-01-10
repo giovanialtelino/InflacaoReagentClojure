@@ -6,6 +6,18 @@
     [clj-time.coerce :as c]
     [clojure.string :as string]))
 
+(defn left-zero-cleaner [value]
+  (if (= 0 (Integer/parseInt (str (nth value 0))))
+    (subs value 1 2)
+    value))
+
+(defn format-date-to-javatime [unformated-date]
+  (let [year (Integer/parseInt (subs unformated-date 0 4))
+        month (Integer/parseInt (left-zero-cleaner (subs unformated-date 5 7)))
+        day (Integer/parseInt (left-zero-cleaner(subs unformated-date 8 10)))
+        formated (jt/to-sql-date (jt/local-date-time year month day))]
+    formated))
+
 (def pg-db {:dbtype "postgresql"
             :dbname "docker"
             :host "localhost"
@@ -23,7 +35,7 @@
                            [:tercodigo "varchar(32)"]]))
 
 (defn check-if-exists-precos12-ipca12 [date]
-  (let [exist (count (jdbc/query pg-db ["SELECT valvalor AS valor FROM precos12_ipca12 WHERE valdata = ?" date]) )]
+  (let [exist (count (jdbc/query pg-db ["SELECT valvalor AS valor FROM precos12_ipca12 WHERE valdata::date = ?" date]) )]
     (if (> exist 0)
       true
       false)))
@@ -36,7 +48,7 @@
                           [:tercodigo "varchar(32)"]]))
 
 (defn check-if-exists-igp12-igpm12 [date]
-  (let [exist (count (jdbc/query pg-db ["SELECT valvalor AS valor FROM igp12_igpm12 WHERE valdata = ?" date]) )]
+  (let [exist (count (jdbc/query pg-db ["SELECT valvalor AS valor FROM igp12_igpm12 WHERE valdata::date = ?" date]) )]
     (if (> exist 0)
       true
       false)))
@@ -49,7 +61,7 @@
                           [:tercodigo "varchar(32)"]]))
 
 (defn check-if-exists-igp12-igpdi12 [date]
-  (let [exist (count (jdbc/query pg-db ["SELECT valvalor AS valor FROM igp12_igpdi12 WHERE valdata = ?" date]) )]
+  (let [exist (count (jdbc/query pg-db ["SELECT valvalor AS valor FROM igp12_igpdi12 WHERE valdata::date = ?" date]) )]
     (if (> exist 0)
       true
       false)))
@@ -62,7 +74,7 @@
                           [:tercodigo "varchar(32)"]]))
 
 (defn check-if-exists-igp12-ipc12 [date]
-  (let [exist (count (jdbc/query pg-db ["SELECT valvalor AS valor FROM igp12_ipc12 WHERE valdata = ?" date]) )]
+  (let [exist (count (jdbc/query pg-db ["SELECT valvalor AS valor FROM igp12_ipc12 WHERE valdata::date = ?" date]) )]
     (if (> exist 0)
       true
       false)))
@@ -75,7 +87,7 @@
                           [:tercodigo "varchar(32)"]]))
 
 (defn check-if-exists-precos12-inpc12 [date]
-  (let [exist (count (jdbc/query pg-db ["SELECT valvalor AS valor FROM precos12_inpc12 WHERE valdata = ?" date]) )]
+  (let [exist (count (jdbc/query pg-db ["SELECT valvalor AS valor FROM precos12_inpc12 WHERE valdata::date = ?" date]) )]
     (if (> exist 0)
       true
       false)))
@@ -83,7 +95,7 @@
 (def last-update
   (jdbc/create-table-ddl :last_update
                          [[:id :serial :primary :key]
-                          [:updated :date]]))
+                          [:updated :timestamptz]]))
 
 (defn initialize-first-update []
   (let [date  (c/to-sql-date (t/date-time 1990 1 1))]
@@ -119,50 +131,51 @@
                 {:updated (c/to-sql-date(t/now))}))
 
 (defn check-if-date-key-already-exists [table date]
+  (let [format-date (format-date-to-javatime date)]
     (case table
-      "precos12_inpc12" (check-if-exists-precos12-inpc12 date)
-      "igp12_ipc12" (check-if-exists-igp12-ipc12 date)
-      "igp12_igpdi12" (check-if-exists-igp12-igpdi12 date)
-      "igp12_igpm12" (check-if-exists-igp12-igpm12 date)
-      "precos12_ipca12" (check-if-exists-precos12-ipca12 date)
-      true))
+      "precos12_inpc12" (check-if-exists-precos12-inpc12 format-date)
+      "igp12_ipc12" (check-if-exists-igp12-ipc12 format-date)
+      "igp12_igpdi12" (check-if-exists-igp12-igpdi12 format-date)
+      "igp12_igpm12" (check-if-exists-igp12-igpm12 format-date)
+      "precos12_ipca12" (check-if-exists-precos12-ipca12 format-date)
+      true)))
 
 (defn insert-data-inflacao [data]
   (let [{:keys [SERCODIGO VALDATA VALVALOR NIVNOME TERCODIGO]} data]
     (if (true? (check-if-date-key-already-exists (string/lower-case SERCODIGO) VALDATA ))
       (println "Key was already presented")
       (jdbc/insert! pg-db (keyword (string/lower-case SERCODIGO))
-                  {:valdata VALDATA
+                  {:valdata (format-date-to-javatime VALDATA)
                    :valvalor VALVALOR
                    :nivnome NIVNOME
                    :tercodigo TERCODIGO}))))
 
 (defn get-value-date-table [table date]
-    (let [conv-date (jt/local-date date)
+    (let [
           query (str "SELECT valvalor FROM " table " WHERE valdata =  ? LIMIT 1")
-          result (jdbc/query pg-db [query conv-date])]
+          result (jdbc/query pg-db [query date])]
       (if (< 0 (count result))
         (:valvalor (nth result 0))
         0
         )))
 
 (defn get-value-date-all-table [date]
-    (let [ all-values {:precos12_inpc12 (get-value-date-table "precos12_inpc12" date )
-                    :igp12_ipc12 (get-value-date-table "igp12_ipc12" date )
-                    :igp12_igpdi12 (get-value-date-table "igp12_igpdi12" date )
-                    :igp12_igpm12 (get-value-date-table "igp12_igpm12" date )
-                    :precos12_ipca12 (get-value-date-table "precos12_ipca12" date)}]
+  (prn  date)
+    (let [formated-date (format-date-to-javatime date)
+          all-values {:precos12_inpc12 (get-value-date-table "precos12_inpc12" formated-date )
+                    :igp12_ipc12 (get-value-date-table "igp12_ipc12" formated-date )
+                    :igp12_igpdi12 (get-value-date-table "igp12_igpdi12" formated-date )
+                    :igp12_igpm12 (get-value-date-table "igp12_igpm12" formated-date )
+                    :precos12_ipca12 (get-value-date-table "precos12_ipca12" formated-date)}]
     all-values))
 
 (defn get-value-all-data [table]
   (let [query (str "SELECT TO_CHAR(valvalor::FLOAT, 'FM999999990.00000000') AS Valor, TO_CHAR(valdata, 'dd/mm/yyyy') AS Data FROM " table " ORDER BY valdata DESC")
         result (jdbc/query pg-db [query])]
-    (prn result)
     result
     ))
 
 (defn get-all-use-data []
-
   (let [all-values {:precos12_inpc12 (get-value-all-data "precos12_inpc12"  )
                     :igp12_ipc12 (get-value-all-data "igp12_ipc12"  )
                     :igp12_igpdi12 (get-value-all-data "igp12_igpdi12"  )

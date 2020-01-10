@@ -48,5 +48,5 @@ VOLUME  ["/etc/postgresql", "/var/log/postgresql", "/var/lib/postgresql"]
 CMD ["/usr/lib/postgresql/9.3/bin/postgres", "-D", "/var/lib/postgresql/9.3/main", "-c", "config_file=/etc/postgresql/9.3/main/postgresql.conf"]
 
 # docker run -P --name pg_test eg_postgresql
-# sudo docker -P run eg_postgresql
+# sudo docker run -P eg_postgresql
 # psql -h localhost -p 32768 -d docker -U docker --password
