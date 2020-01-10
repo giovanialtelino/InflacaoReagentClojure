@@ -47,7 +47,7 @@
     (loop [i 0
            values-cleaned [val-inicio]]
       (if (< i date-counter)
-        (recur (inc i) (conj values-cleaned (get-in values [(keyword (nth dates i)) index])))
+        (recur (inc i) (conj values-cleaned (.toFixed (get-in values [(keyword (nth dates i)) index]) 4 )))
         values-cleaned))))
 
 (defn year-month-collector []
@@ -129,7 +129,6 @@
     (go (let [response (<! (http/post "http://localhost:8080/graphgen"
                                       {:with-credetials? false
                                        :json-params      body}))]
-          (prn response)
           ;          (my-table [mes-ano-diversos mes-ano-inicial valor-inicial (:body response)])
           (chart-component [mes-ano-diversos mes-ano-inicial valor-inicial (:body response)])))))
 

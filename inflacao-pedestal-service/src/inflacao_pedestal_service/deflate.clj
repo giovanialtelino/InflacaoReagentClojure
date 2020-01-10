@@ -2,7 +2,8 @@
   (:require [inflacao-pedestal-service.database :as database]
             [inflacao-pedestal-service.data-acess :as data-access]
             [clj-time.core :as t]
-            [clj-time.coerce :as c]))
+            [clj-time.coerce :as c]
+            [java-time :as jt]))
 
 (defn deflate [index-1 index-2 value]
       (if (> index-1 0 )
@@ -54,7 +55,8 @@
         deflated ))))
 
 (defn generate-graph [valor inicio fins]
-     (let [get-valores-inicio (conj [] {(keyword inicio)(database/get-value-date-all-table (front-end-date-parser inicio))})
+     (let [data-inicio-menos-1 (str (jt/minus (jt/local-date (front-end-date-parser inicio)) (jt/months 1)))
+           get-valores-inicio (conj [] {(keyword inicio)(database/get-value-date-all-table data-inicio-menos-1 )})
            get-value-all-fins (get-value-all-fins fins)
            deflated (deflate-all-values-got valor get-valores-inicio get-value-all-fins inicio fins)]
     deflated))

@@ -95,10 +95,10 @@
 (def last-update
   (jdbc/create-table-ddl :last_update
                          [[:id :serial :primary :key]
-                          [:updated :timestamptz]]))
+                          [:updated :date]]))
 
 (defn initialize-first-update []
-  (let [date  (c/to-sql-date (t/date-time 1990 1 1))]
+  (let [date   (jt/to-sql-date (jt/local-date-time 1990 1 1))]
     (println date)
     (jdbc/insert! pg-db :last_update
                   {:updated date})))
@@ -128,7 +128,7 @@
 
 (defn update-last-update []
   (jdbc/insert! pg-db :last_update
-                {:updated (c/to-sql-date(t/now))}))
+                {:updated (jt/to-sql-date (jt/local-date-time))}))
 
 (defn check-if-date-key-already-exists [table date]
   (let [format-date (format-date-to-javatime date)]
@@ -160,7 +160,6 @@
         )))
 
 (defn get-value-date-all-table [date]
-  (prn  date)
     (let [formated-date (format-date-to-javatime date)
           all-values {:precos12_inpc12 (get-value-date-table "precos12_inpc12" formated-date )
                     :igp12_ipc12 (get-value-date-table "igp12_ipc12" formated-date )
@@ -181,6 +180,6 @@
                     :igp12_igpdi12 (get-value-all-data "igp12_igpdi12"  )
                     :igp12_igpm12 (get-value-all-data "igp12_igpm12"  )
                     :precos12_ipca12 (get-value-all-data "precos12_ipca12" )
-                    :last-update (.format (java.text.SimpleDateFormat. "dd/MM/yyyy") (get-last-update))}]
+                    :last-update (jt/format "dd/MM/yyyy" (jt/local-date (get-last-update)))}]
     all-values))
 
