@@ -130,7 +130,7 @@
                                       {:with-credetials? false
                                        :json-params      body}))]
           ;          (my-table [mes-ano-diversos mes-ano-inicial valor-inicial (:body response)])
-          (chart-component [mes-ano-diversos mes-ano-inicial valor-inicial (:body response)])))))
+          (chart-component [mes-ano-diversos mes-ano-inicial valor-inicial (:chart (:body response))])))))
 
 (defn send-button-handler []
   (let [year-month (year-month-collector)

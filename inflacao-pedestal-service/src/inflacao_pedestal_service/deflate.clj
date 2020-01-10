@@ -13,11 +13,6 @@
 (defn front-end-date-parser [unparsed-date]
   (str unparsed-date "-01"))
 
-(defn date-cleaner [date]
-  (let [year (Integer/parseInt (subs date 0 4))
-        month (Integer/parseInt (subs date 5 7))]
-    (c/to-sql-date (t/date-time year month 1))))
-
 (defn get-value-all-fins [fins]
   (let [fins-count (count fins)]
     (loop [i 0
@@ -54,9 +49,17 @@
           (recur (inc i) deflated))
         deflated ))))
 
+//Precisa pegar todos os valores e tirar -100 pra retornar a tabela pra renderizar no FE, basicamente
+//Depois só ajustar o CSS e ver a questão do go channel aberto
+(defn inflacao-all-values-got [deflated datas]
+  (println deflated)
+  deflated)
+
 (defn generate-graph [valor inicio fins]
      (let [data-inicio-menos-1 (str (jt/minus (jt/local-date (front-end-date-parser inicio)) (jt/months 1)))
            get-valores-inicio (conj [] {(keyword inicio)(database/get-value-date-all-table data-inicio-menos-1 )})
            get-value-all-fins (get-value-all-fins fins)
-           deflated (deflate-all-values-got valor get-valores-inicio get-value-all-fins inicio fins)]
-    deflated))
+           deflated (deflate-all-values-got valor get-valores-inicio get-value-all-fins inicio fins)
+           table (inflacao-all-values-got (deflate-all-values-got 100 get-valores-inicio get-value-all-fins inicio fins) fins)]
+    {:chart deflated
+     :table table}))
