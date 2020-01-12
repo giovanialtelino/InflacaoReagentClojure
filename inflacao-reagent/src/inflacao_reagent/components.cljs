@@ -4,7 +4,6 @@
     [cljsjs.chartjs]
     [reagent.core :as r]
     [inflacao-reagent.util :as utils]
-    [inflacao-reagent.chart :as chart]
     [cljs.core.async :refer [<!]]))
 
 (defn dropdown-selector-mes [id]

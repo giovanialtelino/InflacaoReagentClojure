@@ -13,7 +13,6 @@
 (def last-update (r/atom []))
 
 (defn last-update-valores []
-  (prn  @last-update)
   [:h2 (str "Ultima atualização dos índices foi efetuada em " @last-update)])
 
 (defn lister [items]
@@ -46,7 +45,6 @@
    [:h1 "Dados utilizados para cálculo dos gráficos"]
    [:p "Para entender da onde os dados foram retirados e mais sobre o sistema acesse a aba Sobre"]
    [last-update-valores]
-
     [:div.columns.is-centered
      [lister-user "INPC" precos12_inpc12]
      [lister-user "IPCA" precos12_ipca12]

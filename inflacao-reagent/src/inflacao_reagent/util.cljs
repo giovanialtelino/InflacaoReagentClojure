@@ -33,6 +33,40 @@
              (.getElementById (str "mes-" i))
              (.-value))))
 
+(def table-values (r/atom []))
+(def table-title (r/atom "Inflação e Valores Corrigidos" ))
+
+(defn lister [items]
+  [:tbody
+   (for [item items ]
+     ^{:key (:data item) } [:tr [:td (:data item)] [:td (:valor item)]])])
+
+(defn lister-table []
+  [:div.column.is-12.table-container {:key "inflacaovalores"}
+   [:table.table.is-stripped.is-fullwidth.is-bordered
+    [:thead
+     [:tr [:th {:colSpan 12 :style {:text-align "center"}} @table-title]]
+     [:tr
+      [:th {:colSpan 2 :rowSpan 2 :style {:text-align "center" :vertical-align "middle"} } "Data"]
+      [:th {:colSpan 2 :style {:text-align "center"} } "INPC"]
+      [:th {:colSpan 2 :style {:text-align "center"}} "IPCA"]
+      [:th {:colSpan 2 :style {:text-align "center"}} "IGPC"]
+      [:th {:colSpan 2 :style {:text-align "center"}} "IGPDI"]
+      [:th {:colSpan 2 :style {:text-align "center"}} "IGPM"]]
+     [:tr
+      [:th {:colSpan 1} "Valor"]
+      [:th {:colSpan 1} "Inflação"]
+      [:th {:colSpan 1} "Valor"]
+      [:th {:colSpan 1} "Inflação"]
+      [:th {:colSpan 1} "Valor"]
+      [:th {:colSpan 1} "Inflação"]
+      [:th {:colSpan 1} "Valor"]
+      [:th {:colSpan 1} "Inflação"]
+      [:th {:colSpan 1} "Valor"]
+      [:th {:colSpan 1} "Inflação"]]
+     ]
+    [lister @table-values]]])
+
 (defn clean-dates [dates]
   (loop [i 0
          clean-dates []]
@@ -109,19 +143,6 @@
                     :data {:labels dates-inicio :datasets dataset }}]
     (js/Chart. context (clj->js chart-data))))
 
-(def ReactTable (r/adapt-react-class (aget js/ReactTable "default")))
-
-(defn my-table-component [data]
-  (prn data)
-  [:table.table [ReactTable {:data data
-                             :columns [
-                                       {:Header "Hello" :columns[ {:Header "first name"  :accessor "0" }
-                                                                 {:Header "second name" :accessor "1" }]}
-                                       ]
-                             :showPagination false
-                             :defaultPageSize 4
-                             }]])
-
 (defn send-to-api [mes-ano-diversos valor-inicial mes-ano-inicial]
   (let [body {:valor valor-inicial
               :inicio mes-ano-inicial
@@ -129,7 +150,7 @@
     (go (let [response (<! (http/post "http://localhost:8080/graphgen"
                                       {:with-credetials? false
                                        :json-params      body}))]
-          ;          (my-table [mes-ano-diversos mes-ano-inicial valor-inicial (:body response)])
+          ;(fill-table-component mes-ano-diversos mes-ano-inicial valor-inicial (:chart (:body response)) (:table (:body response)))
           (chart-component [mes-ano-diversos mes-ano-inicial valor-inicial (:chart (:body response))])))))
 
 (defn send-button-handler []

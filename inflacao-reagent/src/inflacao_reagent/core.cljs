@@ -20,8 +20,6 @@
    [:p "O principal motivo para criação dessa página foi técnico, para experimentar de forma prática alguns métodos de programação, e para os interessados atualizarei essa página, futuramente, com um link para um blog, demonstrando um pouco o desenvolvimento da aplicação"]
    [:p "Já a ideia para essa página surgiu de uma conversa em um grupo no WhatsApp, em que foi citado esse (https://fmeireles.com/blog/rstats/deflacionar-series-no-r-deflatebr/) projeto, que permite deflacionar valores, entretanto para que fosse utilizado a pessoa deveria ter um conhecimento da linguagem de programação R."]])
 
-
-
 (defn chart-component-mount
   []
   (r/create-class
@@ -48,11 +46,14 @@
     [:div {:class "column is-3"} [components/date-field 3]]]
    [:div {:class "columns is-centered"}
     [:div {:class "column is-2"} [components/send-button]]]
+   [:div.columns.is-centered
+    [:div.column.is-10 [utils/lister-table]]]
    [:div {:class "columns is-centered"}
     [:div {:class "column is-12 chart-container" :style {:position "absolute"
                                                          :height "500px"
                                                          :width  "80%"
                                                          }  } [chart-component-mount]]]
+
    ]
   )
 

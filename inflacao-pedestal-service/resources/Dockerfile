@@ -49,4 +49,4 @@ CMD ["/usr/lib/postgresql/9.3/bin/postgres", "-D", "/var/lib/postgresql/9.3/main
 
 # docker run -P --name pg_test eg_postgresql
 # sudo docker run -P eg_postgresql
-# psql -h localhost -p 32768 -d docker -U docker --password
+# psql -h localhost -p 32768 -d docker -U docker
