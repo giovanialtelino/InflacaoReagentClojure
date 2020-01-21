@@ -30,21 +30,21 @@
   (if (= 4 (count ano))
     (let [ano-n (int ano)
           mes-n (int (-> js/document
-                (.getElementById "mes-inicial" )
-                (.-value)))
-        data (tt/local-date ano-n mes-n 1)]
-      (if (tt/within? (tt/interval  (tt/local-date 1970 5 15) (tt/local-date 1986 2 27))
-                      data)       (reset! moeda "Valor inteiro inicial para cálculo (Cr$)"))
-      (if (tt/within? (tt/interval  (tt/local-date 1986 2 28) (tt/local-date 1989 1 15))
-                      data)       (reset! moeda "Valor inteiro inicial para cálculo (Cz$)"))
-      (if (tt/within? (tt/interval  (tt/local-date 1989 1 16) (tt/local-date 1990 3 15))
-                      data)       (reset! moeda "Valor inteiro inicial para cálculo (NCz$)"))
-      (if (tt/within? (tt/interval  (tt/local-date 1990 3 16) (tt/local-date 1993 7 30))
-                      data)       (reset! moeda "Valor inteiro inicial para cálculo (Cr$)"))
-      (if (tt/within? (tt/interval  (tt/local-date 1993 8 1) (tt/local-date 1994 6 30))
-                      data)       (reset! moeda "Valor inteiro inicial para cálculo (CR$)"))
-      (if (tt/within? (tt/interval  (tt/local-date 1994 7 1) (tt/local-date 2099 1 1))
-                      data)       (reset! moeda "Valor inteiro inicial para cálculo (R$)"))
+                         (.getElementById "mes-inicial")
+                         (.-value)))
+          data (tt/local-date ano-n mes-n 1)]
+      (if (tt/within? (tt/interval (tt/local-date 1970 5 15) (tt/local-date 1986 2 27))
+                      data) (reset! moeda "Valor inteiro inicial para cálculo (Cr$)"))
+      (if (tt/within? (tt/interval (tt/local-date 1986 2 28) (tt/local-date 1989 1 15))
+                      data) (reset! moeda "Valor inteiro inicial para cálculo (Cz$)"))
+      (if (tt/within? (tt/interval (tt/local-date 1989 1 16) (tt/local-date 1990 3 15))
+                      data) (reset! moeda "Valor inteiro inicial para cálculo (NCz$)"))
+      (if (tt/within? (tt/interval (tt/local-date 1990 3 16) (tt/local-date 1993 7 30))
+                      data) (reset! moeda "Valor inteiro inicial para cálculo (Cr$)"))
+      (if (tt/within? (tt/interval (tt/local-date 1993 8 1) (tt/local-date 1994 6 30))
+                      data) (reset! moeda "Valor inteiro inicial para cálculo (CR$)"))
+      (if (tt/within? (tt/interval (tt/local-date 1994 7 1) (tt/local-date 2099 1 1))
+                      data) (reset! moeda "Valor inteiro inicial para cálculo (R$)"))
       )))
 
 (defn check-change-ano-selector-valid [ano new-ano id]
@@ -60,58 +60,58 @@
             (update-moeda new-ano)))))))
 
 (defn check-change-valor-inicial-valid [val new-val]
-   (if (= 0 (count new-val))
+  (if (= 0 (count new-val))
     (reset! val nil)
     (reset! val new-val)))
 
 (defn input-selector-ano [id date-value]
-  [:input {:type      "number"
-           :maxLength "4"
-           :min       "1979"
-           :class     "input"
-           :id        (str "ano-" id)
+  [:input.mdc-text-field__input {:type        "number"
+           :maxLength   "4"
+           :min         "1979"
+           :class       "input"
+           :id          (str "ano-" id)
            :placeholder "Ano"
-           :value @date-value
-           :on-change #(check-change-ano-selector-valid date-value (-> % .-target .-value) (-> % .-target .-id))
+           :value       @date-value
+           :on-change   #(check-change-ano-selector-valid date-value (-> % .-target .-value) (-> % .-target .-id))
            }])
 
 (defn atom-input [val]
-  [:input {:type "number"
-           :value @val
-           :min "1"
-           :class "input"
-           :id "valor-inicial"
-           :on-change #(check-change-valor-inicial-valid val (-> % .-target .-value))
+  [:input {:type        "number"
+           :value       @val
+           :min         "1"
+           :class       "input"
+           :id          "valor-inicial"
+           :on-change   #(check-change-valor-inicial-valid val (-> % .-target .-value))
            :placeholder "Valor para cálculo"}])
 
 (defn valor-input []
   (let
-    [val (r/atom 1,00)]
+    [val (r/atom 1, 00)]
     (fn []
-    [:div {:class "field"}
-   [:label {:class "label"} @moeda]
-     [atom-input val]
-   ])))
+      [:div
+       [:label  @moeda]
+       [atom-input val]
+       ])))
 
 (defn date-field [id]
- (let [date (r/atom nil)]
-   [:div.field.has-addons.has-addons-center
-   [:p.control {:class "select"}
-    [dropdown-selector-mes id]]
-   [:p.control
-    [input-selector-ano id date]]
-   ]))
+  (let [date (r/atom nil)]
+    [:div.date-field.al-ct
+     [:div
+      [dropdown-selector-mes id]
+      [input-selector-ano id date]
+     ]]))
 
 (defn data-inicial-input []
-  [:div {:class "field"}
-   [:label {:class "label"} "Data Inicial"]
+  [:div
+   [:label "Data Inicial"]
    [date-field "inicial"]])
 
 (defn send-button-func []
- (prn (go (<! (utils/send-button-handler)))))
+  (utils/send-button-handler))
 
 (defn send-button []
-  [:div.control
-   [:button.button.is-primary {:on-click  send-button-func}  "Gerar Gráfico E Tabela"]]
+  [:div
+   [:button.button
+    {:on-click send-button-func} "Gerar Gráfico E Tabela"]]
   )
 
