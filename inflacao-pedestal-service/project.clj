@@ -6,7 +6,6 @@
   :dependencies [[org.clojure/clojure "1.10.1"]
                  [io.pedestal/pedestal.service "0.5.7"]
                  [io.pedestal/pedestal.jetty "0.5.7"]
-                 [cheshire "5.9.0"]
                  [clj-http "3.10.0"]
                  [org.clojure/java.jdbc "0.7.10"]
                  [org.postgresql/postgresql "42.2.9"]

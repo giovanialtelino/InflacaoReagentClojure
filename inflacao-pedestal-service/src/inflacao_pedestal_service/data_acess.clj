@@ -10,7 +10,7 @@
                    "http://ipeadata.gov.br/api/odata4/ValoresSerie(SERCODIGO='IGP12_IGPDI12')",
                    "http://ipeadata.gov.br/api/odata4/ValoresSerie(SERCODIGO='IGP12_IPC12')",
                    "http://ipeadata.gov.br/api/odata4/ValoresSerie(SERCODIGO='PRECOS12_INPC12')"
-                  ])
+                   ])
 
 (defn get-data [link]
   (client/get link {:accept :json} true))
@@ -25,8 +25,8 @@
 
 (defn same-year [last-update]
   (if (= (jt/format "yyyy" (jt/local-date)) (jt/format "yyyy" (jt/local-date last-update)))
-     true
-     false))
+    true
+    false))
 
 (defn check-last-data []
   (let [data (database/get-last-update)]
@@ -44,7 +44,7 @@
       (if (< i vector-size)
         (do
           (database/insert-data-inflacao (nth clean-data i))
-            (recur (inc i)))
+          (recur (inc i)))
         ))))
 
 (defn access-data []
@@ -52,8 +52,8 @@
     (let [vector-size (count links-vector)]
       (loop [i 0]
         (if (< i vector-size)
-          ( do (save-data (parse-data (get-data (get links-vector i))))
-               (recur (inc i)))))
+          (do (save-data (parse-data (get-data (get links-vector i))))
+              (recur (inc i)))))
       (database/update-last-update))
     (println "Nothing to do now")))
 
