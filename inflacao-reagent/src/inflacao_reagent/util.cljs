@@ -36,10 +36,50 @@
 (def table-values (r/atom []))
 (def table-title (r/atom "Inflação e Valores Corrigidos" ))
 
+(defn update-title-component [mes-ano valor]
+  (reset! table-title (str "Inflação e Valores Corrigidos - Data " mes-ano " - Valor " valor)))
+
+(defn update-table-component [mes-ano-inicial valor-inicial deflated inflacao]
+  (update-title-component mes-ano-inicial valor-inicial)
+  (let [counter (count deflated)
+        maps-keys (keys deflated)]
+
+    (loop [i 0
+           tv []]
+      (if (< i counter)
+        (let [moeda (get-in deflated [(nth maps-keys i) :moeda])]
+         (recur (inc i) (conj tv [(nth maps-keys i)
+                                  {:precos12_inpc12-d (str moeda " " (.toFixed (get-in deflated [(nth maps-keys i) :precos12_inpc12]) 4))
+                                   :precos12_ipca12-d (str moeda " " (.toFixed (get-in deflated [(nth maps-keys i) :precos12_ipca12]) 4))
+                                   :igp12_ipc12-d (str moeda " " (.toFixed (get-in deflated [(nth maps-keys i) :igp12_ipc12]) 4))
+                                   :igp12_igpdi12-d (str moeda " " (.toFixed (get-in deflated [(nth maps-keys i) :igp12_igpdi12]) 4))
+                                   :igp12_igpm12-d (str moeda " " (.toFixed (get-in deflated [(nth maps-keys i) :igp12_igpm12]) 4))
+
+                                   :precos12_ipca12-i  (.toFixed (get-in inflacao [(nth maps-keys i) :precos12_ipca12]) 4)
+                                   :precos12_inpc12-i  (.toFixed (get-in inflacao [(nth maps-keys i) :precos12_inpc12]) 4)
+                                   :igp12_ipc12-i  (.toFixed (get-in inflacao [(nth maps-keys i) :igp12_ipc12]) 4)
+                                   :igp12_igpdi12-i  (.toFixed (get-in inflacao [(nth maps-keys i) :igp12_igpdi12]) 4)
+                                   :igp12_igpm12-i  (.toFixed (get-in inflacao [(nth maps-keys i) :igp12_igpm12]) 4)
+                                   }])))
+          (reset! table-values tv)))))
+
 (defn lister [items]
   [:tbody
-   (for [item items ]
-     ^{:key (:data item) } [:tr [:td (:data item)] [:td (:valor item)]])])
+   (for [item items]
+     ^{:key (nth item 0)}
+     [:tr
+      [:th {:colSpan 2} (nth item 0)]
+      [:td {:colSpan 1} (:precos12_inpc12-d (nth item 1))]
+      [:td {:colSpan 1} (:precos12_inpc12-i (nth item 1))]
+      [:td {:colSpan 1} (:precos12_ipca12-d (nth item 1))]
+      [:td {:colSpan 1} (:precos12_ipca12-i (nth item 1))]
+      [:td {:colSpan 1} (:igp12_ipc12-d (nth item 1))]
+      [:td {:colSpan 1} (:igp12_ipc12-i (nth item 1))]
+      [:td {:colSpan 1} (:igp12_igpdi12-d (nth item 1))]
+      [:td {:colSpan 1} (:igp12_igpdi12-i (nth item 1))]
+      [:td {:colSpan 1} (:igp12_igpm12-d (nth item 1))]
+      [:td {:colSpan 1} (:igp12_igpm12-i (nth item 1))]]
+     )])
 
 (defn lister-table []
   [:div.column.is-12.table-container {:key "inflacaovalores"}
@@ -48,22 +88,22 @@
      [:tr [:th {:colSpan 12 :style {:text-align "center"}} @table-title]]
      [:tr
       [:th {:colSpan 2 :rowSpan 2 :style {:text-align "center" :vertical-align "middle"} } "Data"]
-      [:th {:colSpan 2 :style {:text-align "center"} } "INPC"]
-      [:th {:colSpan 2 :style {:text-align "center"}} "IPCA"]
-      [:th {:colSpan 2 :style {:text-align "center"}} "IGPC"]
-      [:th {:colSpan 2 :style {:text-align "center"}} "IGPDI"]
-      [:th {:colSpan 2 :style {:text-align "center"}} "IGPM"]]
+      [:th {:colSpan 2 :style {:text-align "center"}} "INPC/IBGE"]
+      [:th {:colSpan 2 :style {:text-align "center"}} "IPCA/IBGE"]
+      [:th {:colSpan 2 :style {:text-align "center"}} "IPC/FGV"]
+      [:th {:colSpan 2 :style {:text-align "center"}} "IGP-DI/FGV"]
+      [:th {:colSpan 2 :style {:text-align "center"}} "IGP-M/FGV"]]
      [:tr
       [:th {:colSpan 1} "Valor"]
-      [:th {:colSpan 1} "Inflação"]
+      [:th {:colSpan 1} "Inflação (%)"]
       [:th {:colSpan 1} "Valor"]
-      [:th {:colSpan 1} "Inflação"]
+      [:th {:colSpan 1} "Inflação (%)"]
       [:th {:colSpan 1} "Valor"]
-      [:th {:colSpan 1} "Inflação"]
+      [:th {:colSpan 1} "Inflação (%)"]
       [:th {:colSpan 1} "Valor"]
-      [:th {:colSpan 1} "Inflação"]
+      [:th {:colSpan 1} "Inflação (%)"]
       [:th {:colSpan 1} "Valor"]
-      [:th {:colSpan 1} "Inflação"]]
+      [:th {:colSpan 1} "Inflação (%)"]]
      ]
     [lister @table-values]]])
 
@@ -99,23 +139,23 @@
         igp12_igpm12  (process-values-dates values val-inicio dates :igp12_igpm12)
         precos12_ipca12  (process-values-dates values val-inicio dates :precos12_ipca12)]
     [{:data precos12_inpc12
-      :label "INPC"
+      :label "INPC/IBGE"
       :borderColor "#332288" :backgroundColor "#332288" :fill "false"
       :order 0}
      {:data precos12_ipca12
-      :label "IPCA"
+      :label "IPCA/IBGE"
       :borderColor "#DDCC77" :backgroundColor "#DDCC77" :fill "false"
       :order 1}
      {:data igp12_ipc12
-      :label "IPC"
+      :label "IPC/FGV"
       :borderColor "#44AA99" :backgroundColor "#44AA99" :fill "false"
       :order 2}
      {:data igp12_igpdi12
-      :label "IGPDI"
+      :label "IGP-DI/FGV"
       :borderColor "#117733" :backgroundColor "#117733" :fill "false"
       :order 3}
      {:data igp12_igpm12
-      :label "IGPM"
+      :label "IGP-M/FGV"
       :borderColor "#999933" :backgroundColor "#999933" :fill "false"
       :order 4}
      ]))
@@ -138,8 +178,6 @@
                                       :intersect true
                                       }
                               }
-
-
                     :data {:labels dates-inicio :datasets dataset }}]
     (js/Chart. context (clj->js chart-data))))
 
@@ -150,7 +188,7 @@
     (go (let [response (<! (http/post "http://localhost:8080/graphgen"
                                       {:with-credetials? false
                                        :json-params      body}))]
-          ;(fill-table-component mes-ano-diversos mes-ano-inicial valor-inicial (:chart (:body response)) (:table (:body response)))
+          (update-table-component mes-ano-inicial valor-inicial (:chart (:body response)) (:table (:body response)))
           (chart-component [mes-ano-diversos mes-ano-inicial valor-inicial (:chart (:body response))])))))
 
 (defn send-button-handler []
@@ -162,6 +200,3 @@
       (if (false? (= 7 (count mes-ano-inicial)))
         (js/alert "Selecione um mês e ano inicial")
          (send-to-api year-month valor-inicial mes-ano-inicial)))))
-
-
-

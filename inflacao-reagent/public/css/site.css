@@ -33,3 +33,21 @@ a {
 a:hover {
   text-decoration: underline;
 }
+
+.navbar-menu {
+    background-color: #C0C0C0;
+}
+
+.navbar-brand{
+background-color:#C0C0C0;}
+
+.navbar-item{
+font-weight: bold;
+}
+
+.navbar-item a:hover{
+color:red;
+}
+
+li{
+list-style-type: circle}
