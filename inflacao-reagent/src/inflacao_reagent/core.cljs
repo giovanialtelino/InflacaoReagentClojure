@@ -22,14 +22,7 @@
          [:p "A calculadora idealmente deve ser utilizada para comparar periodos que utilizem as mesmas moedas, por exemplo cruzeiro com cruzeiro e real com real, no momento ainda não adicionei a função para transformar de cruzeiro para real, por exemplo."]
          [:p "O principal motivo para criação dessa página foi técnico, para experimentar de forma prática alguns métodos de programação, especificamente Clojure, e para os interessados atualizarei essa página, futuramente, com um link para um blog, demonstrando um pouco o desenvolvimento da aplicação."]
          [:p "Já a ideia para essa página surgiu de uma conversa em um grupo no WhatsApp, em que foi citado " [:a {:href "https://fmeireles.com/blog/rstats/deflacionar-series-no-r-deflatebr"} "esse"] " projeto, que permite deflacionar valores, até de maneira mais completa com algumas funções extras, entretanto para que fosse utilizado a pessoa deveria ter um conhecimento da linguagem de programação R, para pessoas que não são da área de TI pode ser uma tarefa um pouco complexa, então resolvi criar essa calculadora, mas fica como recomendação o projeto do Fernando Meireles no link."]]
-   [:br]
-   [:div
-    [:p "Neste momento o site tem os seguintes problemas: "]
-    [:ul
-     [:li "Desalinhamento em determinadas resoluções de tela"]
-     [:li "Não mostrar a moeda do periodo que foi selecionado"]
-     [:li "Não apresenta erro quando o índice com os valores não está presente no banco de dados"]
-     [:li "Ao gerar dois gráficos sem recarregar a página ele pode apresentar o gráfico anterior ao passar o mouse por cima para ver os dados"]]]])
+    ])
 
 (defn inflacao-deflacao-page []
   [:div.container
@@ -37,7 +30,7 @@
     [components/valor-input]
     [components/data-inicial-input]]
    [:div.dates
-    [:label.label
+    [:h2
      "Datas para serem calculadas"]
     [:div.date-selector
      [components/date-field 0]
@@ -48,34 +41,23 @@
     [components/send-button]]
    [:div.table [utils/lister-table]]
    [:div#chart-container.chart
-    [:canvas {:id "rev-chartjs"
-              }]
-    ]]
-  )
+    [:canvas {:id "rev-chartjs"}]]])
 
 (defn navbar []
-  [:nav.navbar.header-fixed {:role "navigation" :aria-label "main navigation"}
-   [:div.navbar-brand
-    [:a.navbar-item
-     ]
-    [:a.navbar-burger.burger {:role "button" :aria-label "menu" :aria-expanded "false" :data-target "navbarBasicExample"}
-     [:span {:aria-hidden "true"}]
-     [:span {:aria-hidden "true"}]
-     [:span {:aria-hidden "true"}]]]
-   [:div#navbarBasicExample.navbar-menu
-    [:div.navbar-start
-     [:a.navbar-item {:href (rfe/href ::calculadora)} "Calculadora"]
-     [:a.navbar-item {:href (rfe/href ::xls)} "Dados Utilizados"]
-     ]
-    [:div.navbar-end
-     [:a.navbar-item {:href (rfe/href ::sobre)} "Sobre"]
-     ]]])
+  [:div.header.header-fixed
+   [:div.navbar.container
+    [:input#navbar-toggle {:type "checkbox"}]
+    [:label {:for "navbar-toggle"} [:i]]
+    [:nav.menu
+     [:ul
+      [:li [:a {:href (rfe/href ::calculadora)} "Calculadora"]]
+      [:li [:a {:href (rfe/href ::xls)} "Dados Utilizados"]]
+      [:li [:a {:href (rfe/href ::sobre)} "Sobre"]]]]]])
 
 (defn footer []
   [:footer.footer
-   [:div.content.has-text-centered
-    [:p "Giovani"]]]
-  )
+   [:div.al-ct
+    [:p.footer-text "Giovani Altelino - " [:a.footer-a {:href "https://www.giovanialtelino.com" :target "_blank"} "Blog"]]]])
 
 (defonce match (r/atom nil))
 

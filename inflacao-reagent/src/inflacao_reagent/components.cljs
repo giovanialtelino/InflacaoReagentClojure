@@ -10,21 +10,22 @@
 (def moeda (r/atom "Valor inteiro inicial para cálculo "))
 
 (defn dropdown-selector-mes [id]
-  [:select
-   {:id (str "mes-" id)}
-   [:option {:value "01"} "Janeiro"]
-   [:option {:value "02"} "Fevereiro"]
-   [:option {:value "03"} "Março"]
-   [:option {:value "04"} "Abril"]
-   [:option {:value "05"} "Maio"]
-   [:option {:value "06"} "Junho"]
-   [:option {:value "07"} "Julho"]
-   [:option {:value "08"} "Agosto"]
-   [:option {:value "09"} "Setembro"]
-   [:option {:value "10"} "Outubro"]
-   [:option {:value "11"} "Novembro"]
-   [:option {:value "12"} "Dezembro"]
-   ])
+  [:div.select-style
+   [:select
+    {:id (str "mes-" id)}
+    [:option {:value "01"} "Janeiro"]
+    [:option {:value "02"} "Fevereiro"]
+    [:option {:value "03"} "Março"]
+    [:option {:value "04"} "Abril"]
+    [:option {:value "05"} "Maio"]
+    [:option {:value "06"} "Junho"]
+    [:option {:value "07"} "Julho"]
+    [:option {:value "08"} "Agosto"]
+    [:option {:value "09"} "Setembro"]
+    [:option {:value "10"} "Outubro"]
+    [:option {:value "11"} "Novembro"]
+    [:option {:value "12"} "Dezembro"]
+    ]])
 
 (defn update-moeda [ano]
   (if (= 4 (count ano))
@@ -66,14 +67,14 @@
 
 (defn input-selector-ano [id date-value]
   [:input.mdc-text-field__input {:type        "number"
-           :maxLength   "4"
-           :min         "1979"
-           :class       "input"
-           :id          (str "ano-" id)
-           :placeholder "Ano"
-           :value       @date-value
-           :on-change   #(check-change-ano-selector-valid date-value (-> % .-target .-value) (-> % .-target .-id))
-           }])
+                                 :maxLength   "4"
+                                 :min         "1979"
+                                 :class       "input"
+                                 :id          (str "ano-" id)
+                                 :placeholder "Ano"
+                                 :value       @date-value
+                                 :on-change   #(check-change-ano-selector-valid date-value (-> % .-target .-value) (-> % .-target .-id))
+                                 }])
 
 (defn atom-input [val]
   [:input {:type        "number"
@@ -88,21 +89,21 @@
   (let
     [val (r/atom 1, 00)]
     (fn []
-      [:div
-       [:label  @moeda]
+      [:div.al-ct
+       [:label @moeda]
        [atom-input val]
        ])))
 
 (defn date-field [id]
   (let [date (r/atom nil)]
-    [:div.date-field.al-ct
-     [:div
+
+     [:div.date-field
       [dropdown-selector-mes id]
       [input-selector-ano id date]
-     ]]))
+      ]))
 
 (defn data-inicial-input []
-  [:div
+  [:div.al-ct
    [:label "Data Inicial"]
    [date-field "inicial"]])
 
