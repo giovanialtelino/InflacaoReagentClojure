@@ -66,7 +66,7 @@
     (reset! val new-val)))
 
 (defn input-selector-ano [id date-value]
-  [:input.mdc-text-field__input {:type        "number"
+  [:input {:type        "number"
                                  :maxLength   "4"
                                  :min         "1979"
                                  :class       "input"
@@ -80,10 +80,10 @@
   [:input {:type        "number"
            :value       @val
            :min         "1"
-           :class       "input"
+           :class       "input-number"
            :id          "valor-inicial"
            :on-change   #(check-change-valor-inicial-valid val (-> % .-target .-value))
-           :placeholder "Valor para cálculo"}])
+           :placeholder "Valor Inteiro"}])
 
 (defn valor-input []
   (let
@@ -91,7 +91,7 @@
     (fn []
       [:div.al-ct
        [:label @moeda]
-       [atom-input val]
+       [:div [atom-input val]]
        ])))
 
 (defn date-field [id]

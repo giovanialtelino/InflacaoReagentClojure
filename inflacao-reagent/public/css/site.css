@@ -52,18 +52,24 @@ grid-row: 2;
 .table{
     grid-area:table;
     text-align:center;
+    margin-left:7px;
+    margin-right: 7px;
+    overflow-x:auto;
 }
 
 .chart{
     grid-area:chart;
     text-align:center;
+    margin-left:7px;
+     margin-right: 10px;
+     overflow-x:auto;
 }
 
 
 table {
   table-layout: fixed;
-  width: 100%;
-  border-collapse: collapse;
+ width: 100%;
+ min-width: 1050px;
   border: 3px solid #898b8c;
 }
 
@@ -107,7 +113,7 @@ display:flex;
 flex-direction: column;
 justify-content: space-around;}
 
-@media (min-width: 900px){
+@media (min-width: 1000px){
 .date-selector{
 flex-direction:row;
 text-align:center;
@@ -119,7 +125,7 @@ text-align:center;
 display:flex;
 flex-direction:row;
 text-align:center;
-padding-bottom:10px;
+margin-bottom:10px;
 justify-content: center;
 }
 
@@ -127,7 +133,17 @@ justify-content: center;
 display:flex;
 flex-direction:row;
 text-align:center;
-justify-content:center;}
+justify-content:center;
+padding-bottom:5px;
+align-items:center;}
+
+.al-ct-footer{
+display:flex;
+flex-direction:row;
+text-align:center;
+justify-content:center;
+align-items:center;
+}
 
 .button {
 	box-shadow:inset 0px 1px 0px 0px #a4e271;
@@ -201,7 +217,11 @@ https://codepen.io/biblos/pen/babJvO
   padding: 28px 20px;
   position: relative;
   z-index: 3;
+  right-padding: 5px;
 }
+
+label {
+padding-right: 5px;}
 
 .navbar label i {
   height: 2px;
@@ -354,6 +374,13 @@ input {
     border: 1px solid #ccc;
     width: 120px;
     border-radius: 3px;
+
+}
+
+.input-number{
+    width:120px;
+    height:20px;
+    margin-bottom:5px;
 }
 
 .select-style {
@@ -374,4 +401,8 @@ input {
 
 .select-style select:focus {
     outline: none;
+}
+
+input{
+   text-align:center;
 }

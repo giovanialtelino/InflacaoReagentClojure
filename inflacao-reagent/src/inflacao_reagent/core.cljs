@@ -27,8 +27,8 @@
 (defn inflacao-deflacao-page []
   [:div.container
    [:div.title [:h1 "Calculadora de Inflação"]
-    [components/valor-input]
-    [components/data-inicial-input]]
+    [components/data-inicial-input]
+    [components/valor-input]]
    [:div.dates
     [:h2
      "Datas para serem calculadas"]
@@ -56,7 +56,7 @@
 
 (defn footer []
   [:footer.footer
-   [:div.al-ct
+   [:div.al-ct-footer
     [:p.footer-text "Giovani Altelino - " [:a.footer-a {:href "https://www.giovanialtelino.com" :target "_blank"} "Blog"]]]])
 
 (defonce match (r/atom nil))

@@ -82,8 +82,8 @@
      )])
 
 (defn lister-table []
-  [:div.column.is-12.table-container {:key "inflacaovalores"}
-   [:table.table.is-stripped.is-fullwidth.is-bordered
+  [:div.table-container {:key "inflacaovalores"}
+   [:table
     [:thead
      [:tr [:th {:colSpan 12 :style {:text-align "center"}} @table-title]]
      [:tr
