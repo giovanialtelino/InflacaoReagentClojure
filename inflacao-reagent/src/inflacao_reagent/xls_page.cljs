@@ -21,8 +21,8 @@
      ^{:key (:data item)} [:tr [:td (:data item)] [:td (:valor item)]])])
 
 (defn lister-user [table-name table]
-  [:div.column.is-2 {:key table-name}
-   [:table.table.is-stripped.is-fullwidth
+  [:div {:key table-name :id table-name}
+   [:table.table-xls
     [:thead [:tr [:th {:colSpan 2 :style {:text-align "center"}} table-name]]]
     [lister @table]]])
 
@@ -41,11 +41,11 @@
 
 (defn page []
   (update-atoms)
-  [:div.container.is-fluid
-   [:h1 "Dados utilizados para cálculo dos gráficos"]
-   [:p "Para entender da onde os dados foram retirados e mais sobre o sistema acesse a aba Sobre"]
-   [last-update-valores]
-   [:div.columns.is-centered
+  [:div.container
+   [:div.al-ct [:h1 "Dados utilizados para cálculo dos gráficos"]]
+   [:div.al-ct [:p "Para entender da onde os dados foram retirados e mais sobre o sistema acesse a aba Sobre"]]
+   [:div.al-ct [last-update-valores]]
+   [:div.table-wrapper
     [lister-user "INPC" precos12_inpc12]
     [lister-user "IPCA" precos12_ipca12]
     [lister-user "IPC" igp12_ipc12]

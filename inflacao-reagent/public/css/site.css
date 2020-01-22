@@ -65,6 +65,14 @@ grid-row: 2;
      overflow-x:auto;
 }
 
+.table-xls{
+    text-align:center;
+    margin-left:7px;
+    margin-right: 7px;
+    overflow-x:auto;
+    min-width: 20px;
+}
+
 
 table {
   table-layout: fixed;
@@ -107,6 +115,29 @@ grid-template-areas:
 "table"
 "chart";
 }
+
+.table-wrapper{
+display:grid;
+grid-gap: 5px;
+grid-template-columns: 1fr 1fr 1fr 1fr 1fr;
+grid-template-areas:
+"INPC IPCA IPC IGPDI IGPM"
+}
+
+#INPC{
+grid-area: INPC;}
+
+#IPCA{
+grid-area: IPCA;}
+
+#IPC{
+grid-area: IPC;}
+
+#IGPDI{
+grid-area: IGPDI;}
+
+#IGPM{
+grid-area: IGPM;}
 
 .date-selector{
 display:flex;
