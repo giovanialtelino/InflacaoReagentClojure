@@ -12,8 +12,7 @@
     [cljs.core.async :refer [<!]]))
 
 (defn about-page []
-  [:div.container [:div {:style {:margin-left "10px" :margin-right "10px"
-                                 }}
+  [:div.container [:div {:style {:margin-left "10px" :margin-right "10px" }}
          [:div.al-ct [:h1 "Fonte dos dados para o cálculo"]]
          [:p "Os dados utilizados neste site foram retirados de APIs do IPEADATA, todo dia primeiro de cada mês os dados o sistema consulta a API do governo e atualiza os dados num banco de dados interno."]
          [:p "Por essa razão é possível que se um índice foi adicionado no meio do mês, ele só vai ser atualizado e estará disponível para uso na geração do gráfico no próximo mês."]
