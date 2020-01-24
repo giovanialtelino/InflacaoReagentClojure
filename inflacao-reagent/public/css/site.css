@@ -437,3 +437,7 @@ input {
 input{
    text-align:center;
 }
+
+#rev-chartjs{
+min-height: 300px;
+}

@@ -7,7 +7,7 @@
 (defn home-page
   [request]
   {:stauts 200
-   :body   "Hello World, I'm working"})
+   :body   "Hello World my friend, you took the wrong route, sorry."})
 
 (defn graph-generator
   [request]
@@ -40,3 +40,5 @@
                                         :h2?  false
                                         :ssl? false
                                         }})
+
+;https://github.com/ptaoussanis/tufte

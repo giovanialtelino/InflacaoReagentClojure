@@ -44,8 +44,7 @@
       (if (< i vector-size)
         (do
           (database/insert-data-inflacao (nth clean-data i))
-          (recur (inc i)))
-        ))))
+          (recur (inc i)))))))
 
 (defn access-data []
   (if (true? (check-last-data))
@@ -54,7 +53,6 @@
         (if (< i vector-size)
           (do (save-data (parse-data (get-data (get links-vector i))))
               (recur (inc i)))))
-      (database/update-last-update))
-    (println "Nothing to do now")))
+      (database/update-last-update))))
 
 

@@ -112,7 +112,5 @@
         get-value-all-fins (get-value-all-fins fins)
         deflated (deflate-all-values-got valor get-valores-inicio get-value-all-fins inicio fins)
         table (inflacao-all-values-got (deflate-all-values-got 100 get-valores-inicio get-value-all-fins inicio fins) fins)]
-    (prn table)
-    (prn deflated)
     {:chart deflated
      :table table}))

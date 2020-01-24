@@ -97,7 +97,6 @@
 
 (defn initialize-first-update []
   (let [date (jt/to-sql-date (jt/local-date-time 1990 1 1))]
-    (println date)
     (jdbc/insert! pg-db :last_update
                   {:updated date})))
 
