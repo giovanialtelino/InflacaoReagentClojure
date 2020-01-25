@@ -26,7 +26,7 @@
     ])
 
 (defn inflacao-deflacao-page []
-  [:div.container
+  [:div#maincont.container
    [:div.title [:h1 "Calculadora de Inflação"]
     [components/data-inicial-input]
     [components/valor-input]]

@@ -162,6 +162,16 @@
 
 (defn chart-component
   [data]
+  (.remove (.getElementById js/document "chart-container"))
+  (let [div (.createElement js/document "div")
+        canvas (.createElement js/document "canvas")
+        target (.getElementById js/document "maincont")]
+    (.appendChild target div)
+    (.appendChild div canvas)
+    (set! (.-id canvas) "rev-chartjs")
+    (set! (.-id div) "chart-container")
+    (set! (.-class div) "chart"))
+
   (let [
         dates (clean-dates (nth data 0))
         dates-inicio (into [] (concat [(nth data 1)] dates))

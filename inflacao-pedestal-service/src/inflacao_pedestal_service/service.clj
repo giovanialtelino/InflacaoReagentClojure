@@ -2,20 +2,24 @@
   (:require [io.pedestal.http :as http]
             [io.pedestal.http.body-params :as body-params]
             [inflacao-pedestal-service.deflate :as deflate]
-            [inflacao-pedestal-service.database :as database]))
+            [inflacao-pedestal-service.database :as database]
+            [taoensso.tufte :as tufte]))
+
+(tufte/add-basic-println-handler! {})
 
 (defn home-page
   [request]
   {:stauts 200
    :body   "Hello World my friend, you took the wrong route, sorry."})
 
+
 (defn graph-generator
   [request]
-  (let [json-params (:json-params request)
-        valor (:valor json-params)
-        inicio (:inicio json-params)
-        fins (:fins json-params)
-        graph-table (deflate/generate-graph valor inicio fins)]
+    (let [ json-params  (:json-params request)
+         valor  (:valor json-params)
+         inicio  (:inicio json-params)
+         fins  (:fins json-params)
+         graph-table (deflate/generate-graph valor inicio fins)]
     {:status 200
      :body   graph-table}))
 
