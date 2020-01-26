@@ -17,11 +17,11 @@
     formated))
 
 (def pg-db {:dbtype   "postgresql"
-            :dbname   "docker"
+            :dbname   "inflacao"
             :host     "localhost"
-            :port     "32768"
-            :user     "docker"
-            :password "docker"
+            :port     "5432"
+            :user     "postgres"
+            :password "pedestalTHISisVERT!"
             :ssl      false
             })
 

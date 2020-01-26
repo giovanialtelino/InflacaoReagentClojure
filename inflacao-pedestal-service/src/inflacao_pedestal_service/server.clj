@@ -27,5 +27,14 @@
   "The entry-point for 'lein run'"
   [& args]
   (println "\nCreating your server...")
-  (server/start runnable-service))
+  (-> service/service                                       ;; start with production configuration
+      (merge {:env                     :prod
+              ::server/join?           false
+              ::server/routes          #(route/expand-routes (deref #'service/routes))
+              ::server/allowed-origins {:creds true :allowed-origins (constantly true)}
+              ::server/secure-headers  {:content-security-policy-settings {:object-src "'none'"}}})
+      server/default-interceptors
+      server/dev-interceptors
+      server/create-server
+      server/start))
 
