@@ -32,6 +32,10 @@
                   (if (tt/within? (tt/interval (tt/local-date 1994 7 1) (tt/local-date 2099 1 1)) data) (reset! moeda "Valor inteiro inicial para cálculo (R$)")
                                                                                                         (reset! moeda "Valor inteiro inicial para cálculo")))))))))))
 
+(defn check-change-mes-selector-valid [id]
+  (if (= id "mes-inicial")
+    (update-moeda)))
+
 (defn dropdown-selector-mes [id]
   [:div.select-style
    [:select
@@ -63,9 +67,7 @@
           (if (= id "ano-inicial")
             (update-moeda)))))))
 
-(defn check-change-mes-selector-valid [id]
-          (if (= id "mes-inicial")
-            (update-moeda)))
+
 
 (defn check-change-valor-inicial-valid [val new-val]
   (if (= 0 (count new-val))

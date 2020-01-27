@@ -27,7 +27,7 @@
     [lister @table]]])
 
 (defn update-atoms []
-  (go (let [response (<! (http/get "http://localhost:8080/xlsgen"
+  (go (let [response (<! (http/get "https://api-calculadora-inflacao.giovanialtelino.com/xlsgen"
                                    {:with-credetials? false
                                     }))
             body (:body response)]

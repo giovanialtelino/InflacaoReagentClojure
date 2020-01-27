@@ -10,6 +10,7 @@
 (defn home-page
   [request]
   {:stauts 200
+   :type "html"
    :body   "Hello World my friend, you took the wrong route, sorry."})
 
 

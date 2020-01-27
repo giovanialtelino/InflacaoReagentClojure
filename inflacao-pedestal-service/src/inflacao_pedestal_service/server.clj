@@ -2,9 +2,7 @@
   (:gen-class)                                              ; for -main method in uberjar
   (:require [io.pedestal.http :as server]
             [io.pedestal.http.route :as route]
-            [inflacao-pedestal-service.service :as service]
-            [inflacao-pedestal-service.data-acess :as data]
-            [inflacao-pedestal-service.database :as database]))
+            [inflacao-pedestal-service.service :as service]))
 
 (defonce runnable-service (server/create-server service/service))
 
@@ -27,14 +25,5 @@
   "The entry-point for 'lein run'"
   [& args]
   (println "\nCreating your server...")
-  (-> service/service                                       ;; start with production configuration
-      (merge {:env                     :prod
-              ::server/join?           false
-              ::server/routes          #(route/expand-routes (deref #'service/routes))
-              ::server/allowed-origins {:creds true :allowed-origins (constantly true)}
-              ::server/secure-headers  {:content-security-policy-settings {:object-src "'none'"}}})
-      server/default-interceptors
-      server/dev-interceptors
-      server/create-server
-      server/start))
+  (server/start runnable-service))
 
