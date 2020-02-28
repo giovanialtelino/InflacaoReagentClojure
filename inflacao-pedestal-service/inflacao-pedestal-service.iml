@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<module cursive.leiningen.project.LeiningenProjectsManager.displayName="inflacao-pedestal-service:0.0.1-SNAPSHOT" cursive.leiningen.project.LeiningenProjectsManager.isLeinModule="true" type="JAVA_MODULE" version="4">
+<module cursive.leiningen.project.LeiningenProjectsManager.displayName="inflacao-pedestal-service:0.0.2" cursive.leiningen.project.LeiningenProjectsManager.isLeinModule="true" type="JAVA_MODULE" version="4">
   <component name="NewModuleRootManager">
     <output url="file://$MODULE_DIR$/target/classes" />
     <output-test url="file://$MODULE_DIR$/target/classes" />
@@ -28,6 +28,10 @@
     <orderEntry type="library" name="Leiningen: com.fasterxml.jackson.dataformat/jackson-dataformat-cbor:2.9.6" level="project" />
     <orderEntry type="library" name="Leiningen: com.fasterxml.jackson.dataformat/jackson-dataformat-smile:2.9.6" level="project" />
     <orderEntry type="library" name="Leiningen: com.googlecode.json-simple/json-simple:1.1.1" level="project" />
+    <orderEntry type="library" name="Leiningen: com.mchange/c3p0:0.9.5.2" level="project" />
+    <orderEntry type="library" name="Leiningen: com.mchange/mchange-commons-java:0.2.11" level="project" />
+    <orderEntry type="library" name="Leiningen: com.stuartsierra/component:0.4.0" level="project" />
+    <orderEntry type="library" name="Leiningen: com.stuartsierra/dependency:0.2.0" level="project" />
     <orderEntry type="library" name="Leiningen: com.taoensso/encore:2.115.0" level="project" />
     <orderEntry type="library" name="Leiningen: com.taoensso/truss:1.5.0" level="project" />
     <orderEntry type="library" name="Leiningen: com.taoensso/tufte:2.1.0" level="project" />
@@ -98,10 +102,10 @@
     <orderEntry type="library" name="Leiningen: org.msgpack/msgpack:0.6.12" level="project" />
     <orderEntry type="library" name="Leiningen: org.ow2.asm/asm-all:4.2" level="project" />
     <orderEntry type="library" name="Leiningen: org.postgresql/postgresql:42.2.9" level="project" />
-    <orderEntry type="library" name="Leiningen: org.slf4j/jcl-over-slf4j:1.7.26" level="project" />
-    <orderEntry type="library" name="Leiningen: org.slf4j/jul-to-slf4j:1.7.26" level="project" />
-    <orderEntry type="library" name="Leiningen: org.slf4j/log4j-over-slf4j:1.7.26" level="project" />
-    <orderEntry type="library" name="Leiningen: org.slf4j/slf4j-api:1.7.26" level="project" />
+    <orderEntry type="library" name="Leiningen: org.slf4j/jcl-over-slf4j:1.7.25" level="project" />
+    <orderEntry type="library" name="Leiningen: org.slf4j/jul-to-slf4j:1.7.25" level="project" />
+    <orderEntry type="library" name="Leiningen: org.slf4j/log4j-over-slf4j:1.7.25" level="project" />
+    <orderEntry type="library" name="Leiningen: org.slf4j/slf4j-api:1.7.25" level="project" />
     <orderEntry type="library" name="Leiningen: potemkin:0.4.5" level="project" />
     <orderEntry type="library" name="Leiningen: riddley:0.1.12" level="project" />
     <orderEntry type="library" name="Leiningen: ring/ring-codec:1.1.1" level="project" />
