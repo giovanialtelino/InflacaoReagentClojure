@@ -1,9 +1,7 @@
 (ns inflacao-pedestal-service.deflate
-  (:require [inflacao-pedestal-service.database :as database]
-            [java-time :as jt]
+  (:require [java-time :as jt]
+            [inflacao-pedestal-service.components.database :as database]
             [taoensso.tufte :as tufte]))
-
-(tufte/add-basic-println-handler! {})
 
 (defn check-if-is-whitin [date min max]
   (let [day (jt/days 1)
@@ -12,21 +10,6 @@
     (if (and (jt/after? date min-adj) (jt/after? max-adj date))
       true
       false)))
-
-(defn cruzeiro-para-cruzado [valor]
-  (/ valor 1000))
-
-(defn cruzado-para-cruzadonovo [valor]
-  (/ valor 1000))
-
-(defn cruzadonovo-para-cruzeiro [valor]
-  valor)
-
-(defn cruzeiro-para-cruzeiroreal [valor]
-  (/ valor 1000))
-
-(defn cruzeiroreal-para-real [valor]
-  (/ valor 2750))
 
 (defn deflate [index-1 index-2 value]
   (if (> index-1 0)
@@ -73,8 +56,7 @@
         periodo (update-moeda (front-end-date-parser data-fim))
         moeda-periodo (:moeda periodo)
         deflater-helper (:inside periodo)]
-    {fim-key {
-              moeda           moeda-periodo
+    {fim-key {moeda           moeda-periodo
               precos12_inpc12 (deflate (precos12_inpc12 valores-inicio) (precos12_inpc12 valores-fim) valor)
               igp12_ipc12     (deflate (igp12_ipc12 valores-inicio) (igp12_ipc12 valores-fim) valor)
               igp12_igpdi12   (deflate (igp12_igpdi12 valores-inicio) (igp12_igpdi12 valores-fim) valor)
@@ -109,7 +91,7 @@
         (recur (inc i) cleaned))
       cleaned)))
 
-(defn generate-graph [valor inicio fins]
+(defn generate-graph [valor inicio fins conn]
   (tufte/profile {}
                  (let [data-inicio-menos-1 (tufte/p ::inicio-menos-1 (str (jt/minus (jt/local-date (front-end-date-parser inicio)) (jt/months 1))))
                        get-valores-inicio (tufte/p ::valores-inicio (conj [] {(keyword inicio) (database/get-value-date-all-table data-inicio-menos-1)}))
