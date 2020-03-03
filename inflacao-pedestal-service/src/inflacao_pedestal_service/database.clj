@@ -8,44 +8,41 @@
     [clojure.string :as string]
     [inflacao-pedestal-service.utils :as utils]))
 
-(defn- pool-query [conn args]
-  (prn conn)
-  (jdbc/with-db-connection [pool-conn conn]
-                           (let [result (jdbc/query pool-conn args)]
-                             result)))
-
-;(jdbc/with-db-connection [conn conn]
-;(let [result (jdbc/query conn "SELECT MAX (updated) FROM last_update")]
-;  (prn "RESULT")
-;  (prn result)
-;  (prn "RESULT")) )
+(defn- pool-query
+  ([conn query]
+   (jdbc/with-db-connection [pool-conn conn]
+                            (let [result (jdbc/query pool-conn query)]
+                              result)))
+  ([conn query args]
+   (jdbc/with-db-connection [pool-conn conn]
+                            (let [result (jdbc/query pool-conn [query args])] result))))
 
 (defn check-if-exists-precos12-ipca12 [conn date]
-  (let [exist (count (pool-query conn ["SELECT valvalor AS valor FROM precos12_ipca12 WHERE valdata::date = ?" date]))]
+  (let [exist (count (pool-query conn "SELECT valvalor AS valor FROM precos12_ipca12 WHERE valdata::date = ?" date))]
     (if (> exist 0)
       true
       false)))
 
 (defn check-if-exists-igp12-igpm12 [conn date]
-  (let [exist (count (pool-query conn ["SELECT valvalor AS valor FROM igp12_igpm12 WHERE valdata::date = ?" date]))]
+  (let [exist (count (pool-query conn "SELECT valvalor AS valor FROM igp12_igpm12 WHERE valdata::date = ?" date))]
     (if (> exist 0)
       true
       false)))
 
 (defn check-if-exists-igp12-igpdi12 [conn date]
-  (let [exist (count (pool-query conn ["SELECT valvalor AS valor FROM igp12_igpdi12 WHERE valdata::date = ?" date]))]
+  (let [exist (count (pool-query conn "SELECT valvalor AS valor FROM igp12_igpdi12 WHERE valdata::date = ?" date))]
     (if (> exist 0)
       true
       false)))
 
 (defn check-if-exists-igp12-ipc12 [conn date]
-  (let [exist (count (pool-query conn ["SELECT valvalor AS valor FROM igp12_ipc12 WHERE valdata::date = ?" date]))]
+  (let [exist (count (pool-query conn "SELECT valvalor AS valor FROM igp12_ipc12 WHERE valdata::date = ?" date))]
     (if (> exist 0)
       true
       false)))
 
 (defn check-if-exists-precos12-inpc12 [conn date]
-  (let [exist (count (pool-query conn ["SELECT valvalor AS valor FROM precos12_inpc12 WHERE valdata::date = ?" date]))]
+  (let [exist (count (pool-query conn "SELECT valvalor AS valor FROM precos12_inpc12 WHERE valdata::date = ?" date))]
     (if (> exist 0)
       true
       false)))
@@ -77,9 +74,10 @@
                      :tercodigo TERCODIGO}))))
 
 (defn get-value-date-table [conn table date]
-  (let [
-        query (str "SELECT valvalor FROM " table " WHERE valdata =  ? LIMIT 1")
-        result (pool-query conn [query date])]
+  (let [query (str "SELECT valvalor FROM " table " WHERE valdata =  ? LIMIT 1")
+        result (pool-query conn query date)]
+    (prn "Result? Result")
+    (prn result)
     (if (< 0 (count result))
       (:valvalor (nth result 0))
       0

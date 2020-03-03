@@ -13,24 +13,21 @@
   [request]
   (ring/content-type (ring/response "Hello World my friend, you took the wrong route, sorry.") "text/plain"))
 
+;
+
 (defn graph-generator
-  [{{:keys [json-params]} :json-params
-    {:keys [storage]}     :components}]
-  (let [valor (:valor json-params)
-        inicio (:inicio json-params)
-        fins (:fins json-params)
-        graph-table (deflate/generate-graph valor inicio fins storage)]
-    (ring/content-type (ring/response graph-table) "application/json")))
+  [{{:keys [valor inicio fins]} :json-params
+    {:keys [storage]}           :components}]
+  (let [graph-table (deflate/generate-graph valor inicio fins (:database storage))]
+    (ring/content-type (ring/response (cs/generate-string graph-table)) "application/json")))
 
 (defn xls-generator
   [{{:keys [storage]} :components}]
-  (prn "--------------------------------")
-  (prn storage)
-  (prn (:database storage))
-  (prn (:datasource (:database storage)))
-  (prn "--------------------------------")
-  (let [all-used-data (database/get-all-use-data (:database storage))]
-    (ring/content-type (ring/response (cs/generate-string all-used-data)) "application/json")))
+  (ring/content-type
+    (ring/response
+      (cs/generate-string
+        (database/get-all-use-data (:database storage))))
+    "application/json"))
 
 (def common-interceptors [(body-params/body-params) bootstrap/html-body])
 

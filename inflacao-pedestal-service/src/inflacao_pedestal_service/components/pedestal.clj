@@ -13,10 +13,12 @@
              [::bootstrap/interceptors] #(vec (->> % (cons (add-system service))))))
 
 (defn base-prod [routes port]
-  {:env               :prod
-   ::bootstrap/routes #(route/expand-routes (deref routes))
-   ::bootstrap/type   ::jetty
-   ::bootstrap/port   port})
+  {:env                        :prod
+   ::bootstrap/routes          #(route/expand-routes (deref routes))
+   ::bootstrap/type            ::jetty
+   ::bootstrap/secure-headers  {:content-security-policy {:object-src "none"}}
+   ::bootstrap/allowed-origins {:creds true :allowed-origins (constantly true)}
+   ::bootstrap/port            port})
 
 (defn prod-init [service-map]
   (bootstrap/default-interceptors service-map))

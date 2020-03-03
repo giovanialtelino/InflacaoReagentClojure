@@ -28,12 +28,6 @@
   component/Lifecycle
   (start [this]
     (let [conn {:datasource @datatasource}]
-      (jdbc/with-db-connection [conn conn]
-                               (let [result (jdbc/query conn "SELECT MAX (updated) FROM last_update")]
-                                 (prn "RESULT")
-                                 (prn result)
-                                 (prn "RESULT")))
-      (prn conn)
       (assoc this :database conn)))
   (stop [this]
     (assoc this :database nil))

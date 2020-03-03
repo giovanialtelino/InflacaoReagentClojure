@@ -195,7 +195,7 @@
   (let [body {:valor  valor-inicial
               :inicio mes-ano-inicial
               :fins   mes-ano-diversos}]
-    (go (let [response (<! (http/post "https://api-calculadora-inflacao.giovanialtelino.com/graphgen"
+    (go (let [response (<! (http/post "http://localhost:8081/graphgen"
                                       {:with-credetials? false
                                        :json-params      body}))]
           (update-table-component mes-ano-inicial valor-inicial (:chart (:body response)) (:table (:body response)))
