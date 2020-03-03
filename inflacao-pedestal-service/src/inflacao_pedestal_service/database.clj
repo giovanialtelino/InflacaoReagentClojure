@@ -5,40 +5,53 @@
     [clojure.java.jdbc :as jdbc]
     [java-time :as jt]
     [clj-http.client :as client]
+    [clojure.string :as string]
     [inflacao-pedestal-service.utils :as utils]))
 
+(defn- pool-query [conn args]
+  (prn conn)
+  (jdbc/with-db-connection [pool-conn conn]
+                           (let [result (jdbc/query pool-conn args)]
+                             result)))
+
+;(jdbc/with-db-connection [conn conn]
+;(let [result (jdbc/query conn "SELECT MAX (updated) FROM last_update")]
+;  (prn "RESULT")
+;  (prn result)
+;  (prn "RESULT")) )
+
 (defn check-if-exists-precos12-ipca12 [conn date]
-  (let [exist (count (jdbc/query conn ["SELECT valvalor AS valor FROM precos12_ipca12 WHERE valdata::date = ?" date]))]
+  (let [exist (count (pool-query conn ["SELECT valvalor AS valor FROM precos12_ipca12 WHERE valdata::date = ?" date]))]
     (if (> exist 0)
       true
       false)))
 
 (defn check-if-exists-igp12-igpm12 [conn date]
-  (let [exist (count (jdbc/query conn ["SELECT valvalor AS valor FROM igp12_igpm12 WHERE valdata::date = ?" date]))]
+  (let [exist (count (pool-query conn ["SELECT valvalor AS valor FROM igp12_igpm12 WHERE valdata::date = ?" date]))]
     (if (> exist 0)
       true
       false)))
 
 (defn check-if-exists-igp12-igpdi12 [conn date]
-  (let [exist (count (jdbc/query conn ["SELECT valvalor AS valor FROM igp12_igpdi12 WHERE valdata::date = ?" date]))]
+  (let [exist (count (pool-query conn ["SELECT valvalor AS valor FROM igp12_igpdi12 WHERE valdata::date = ?" date]))]
     (if (> exist 0)
       true
       false)))
 
 (defn check-if-exists-igp12-ipc12 [conn date]
-  (let [exist (count (jdbc/query conn ["SELECT valvalor AS valor FROM igp12_ipc12 WHERE valdata::date = ?" date]))]
+  (let [exist (count (pool-query conn ["SELECT valvalor AS valor FROM igp12_ipc12 WHERE valdata::date = ?" date]))]
     (if (> exist 0)
       true
       false)))
 
 (defn check-if-exists-precos12-inpc12 [conn date]
-  (let [exist (count (jdbc/query conn ["SELECT valvalor AS valor FROM precos12_inpc12 WHERE valdata::date = ?" date]))]
+  (let [exist (count (pool-query conn ["SELECT valvalor AS valor FROM precos12_inpc12 WHERE valdata::date = ?" date]))]
     (if (> exist 0)
       true
       false)))
 
 (defn get-last-update [conn]
-  (:max (nth (jdbc/query conn ["SELECT MAX (updated) FROM last_update"]) 0)))
+  (:max (nth (pool-query conn ["SELECT MAX (updated) FROM last_update"]) 0)))
 
 (defn update-last-update [conn]
   (jdbc/insert! conn :last_update {:updated (jt/to-sql-date (jt/local-date-time))}))
@@ -58,7 +71,7 @@
     (if (true? (check-if-date-key-already-exists conn (string/lower-case SERCODIGO) VALDATA))
       (println "Key was already presented")
       (jdbc/insert! conn (keyword (string/lower-case SERCODIGO))
-                    {:valdata   (format-date-to-javatime VALDATA)
+                    {:valdata   (utils/format-date-to-javatime VALDATA)
                      :valvalor  VALVALOR
                      :nivnome   NIVNOME
                      :tercodigo TERCODIGO}))))
@@ -66,14 +79,14 @@
 (defn get-value-date-table [conn table date]
   (let [
         query (str "SELECT valvalor FROM " table " WHERE valdata =  ? LIMIT 1")
-        result (jdbc/query conn [query date])]
+        result (pool-query conn [query date])]
     (if (< 0 (count result))
       (:valvalor (nth result 0))
       0
       )))
 
 (defn get-value-date-all-table [conn date]
-  (let [formated-date (format-date-to-javatime date)
+  (let [formated-date (utils/format-date-to-javatime date)
         all-values {:precos12_inpc12 (get-value-date-table conn "precos12_inpc12" formated-date)
                     :igp12_ipc12     (get-value-date-table conn "igp12_ipc12" formated-date)
                     :igp12_igpdi12   (get-value-date-table conn "igp12_igpdi12" formated-date)
@@ -83,7 +96,9 @@
 
 (defn get-value-all-data [conn table]
   (let [query (str "SELECT TO_CHAR(valvalor::FLOAT, 'FM999999990.00000000') AS Valor, TO_CHAR(valdata, 'dd/mm/yyyy') AS Data FROM " table " ORDER BY valdata DESC")
-        result (jdbc/query conn [query])]
+        result (pool-query conn query)]
+    (prn "RESULT BELLOW!!!")
+    (prn result)
     result))
 
 (defn get-all-use-data [conn]
@@ -107,7 +122,7 @@
   (client/get link {:accept :json} true))
 
 (defn parse-data [json]
-  (:value (parse-string (:body json) true)))
+  (:value (cs/parse-string (:body json) true)))
 
 (defn same-month [last-update]
   (if (= (jt/format "MM" (jt/local-date)) (jt/format "MM" (jt/local-date last-update)))

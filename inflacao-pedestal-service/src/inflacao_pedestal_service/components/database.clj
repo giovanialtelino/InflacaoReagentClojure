@@ -1,8 +1,7 @@
 (ns inflacao-pedestal-service.components.database
   (:require [com.stuartsierra.component :as component]
-            [hikari-cp.core :as hikari]
             [clojure.java.jdbc :as jdbc]
-            ))
+            [hikari-cp.core :as hikari]))
 
 ;;Of course you should never use your password like this,
 ;a decent idea would have those normal files here and them use environ and System to assoc the password value to this map
@@ -16,9 +15,9 @@
                           :maximum-pool-size  10
                           :pool-name          "db-pool"
                           :adapter            "postgresql"
-                          :username           "postgres"
-                          :password           "pedestalTHISisVERT"
-                          :database-name      "inflacao"
+                          :username           "docker"
+                          :password           "docker"
+                          :database-name      "docker"
                           :server-name        "localhost"
                           :port-number        5432
                           :register-mbeans    false})
@@ -29,6 +28,12 @@
   component/Lifecycle
   (start [this]
     (let [conn {:datasource @datatasource}]
+      (jdbc/with-db-connection [conn conn]
+                               (let [result (jdbc/query conn "SELECT MAX (updated) FROM last_update")]
+                                 (prn "RESULT")
+                                 (prn result)
+                                 (prn "RESULT")))
+      (prn conn)
       (assoc this :database conn)))
   (stop [this]
     (assoc this :database nil))

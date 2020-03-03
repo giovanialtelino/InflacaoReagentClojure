@@ -1,6 +1,6 @@
 (ns inflacao-pedestal-service.deflate
   (:require [java-time :as jt]
-            [inflacao-pedestal-service.components.database :as database]
+            [inflacao-pedestal-service.database :as database]
             [taoensso.tufte :as tufte]))
 
 (defn check-if-is-whitin [date min max]
@@ -34,14 +34,14 @@
 (defn front-end-date-parser [unparsed-date]
   (str unparsed-date "-01"))
 
-(defn get-value-all-fins [fins]
+(defn get-value-all-fins [conn fins]
   (let [fins-count (count fins)]
     (loop [i 0
            all-fins {}]
       (if (< i fins-count)
         (if (= 7 (count (nth fins i)))
           (recur (inc i) (conj all-fins {(keyword (nth fins i))
-                                         (tufte/p ::database-access (database/get-value-date-all-table (front-end-date-parser (nth fins i))))}))
+                                         (tufte/p ::database-access (database/get-value-date-all-table conn (front-end-date-parser (nth fins i))))}))
           (recur (inc i) all-fins))
         all-fins))))
 
@@ -94,8 +94,8 @@
 (defn generate-graph [valor inicio fins conn]
   (tufte/profile {}
                  (let [data-inicio-menos-1 (tufte/p ::inicio-menos-1 (str (jt/minus (jt/local-date (front-end-date-parser inicio)) (jt/months 1))))
-                       get-valores-inicio (tufte/p ::valores-inicio (conj [] {(keyword inicio) (database/get-value-date-all-table data-inicio-menos-1)}))
-                       get-value-all-fins (tufte/p ::fins-valores (get-value-all-fins fins))
+                       get-valores-inicio (tufte/p ::valores-inicio (conj [] {(keyword inicio) (database/get-value-date-all-table conn data-inicio-menos-1)}))
+                       get-value-all-fins (tufte/p ::fins-valores (get-value-all-fins conn fins))
                        deflated (tufte/p ::deflates (deflate-all-values-got valor get-valores-inicio get-value-all-fins inicio fins))
                        table (tufte/p ::table (inflacao-all-values-got (deflate-all-values-got 100 get-valores-inicio get-value-all-fins inicio fins) fins))]
                    {:chart deflated

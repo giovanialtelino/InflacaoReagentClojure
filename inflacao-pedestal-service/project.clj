@@ -9,7 +9,6 @@
                  [clj-http "3.10.0"]
                  [org.clojure/java.jdbc "0.7.10"]
                  [org.postgresql/postgresql "42.2.9"]
-                 [com.mchange/c3p0 "0.9.5.2"]
                  [com.stuartsierra/component.repl "0.2.0"]
                  [clojure.java-time "0.3.2"]
                  [com.taoensso/tufte "2.1.0"]

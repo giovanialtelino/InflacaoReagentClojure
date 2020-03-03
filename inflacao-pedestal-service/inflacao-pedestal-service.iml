@@ -27,8 +27,6 @@
     <orderEntry type="library" name="Leiningen: com.fasterxml.jackson.dataformat/jackson-dataformat-cbor:2.9.6" level="project" />
     <orderEntry type="library" name="Leiningen: com.fasterxml.jackson.dataformat/jackson-dataformat-smile:2.9.6" level="project" />
     <orderEntry type="library" name="Leiningen: com.googlecode.json-simple/json-simple:1.1.1" level="project" />
-    <orderEntry type="library" name="Leiningen: com.mchange/c3p0:0.9.5.2" level="project" />
-    <orderEntry type="library" name="Leiningen: com.mchange/mchange-commons-java:0.2.11" level="project" />
     <orderEntry type="library" name="Leiningen: com.stuartsierra/component.repl:0.2.0" level="project" />
     <orderEntry type="library" name="Leiningen: com.stuartsierra/component:0.4.0" level="project" />
     <orderEntry type="library" name="Leiningen: com.stuartsierra/dependency:0.2.0" level="project" />

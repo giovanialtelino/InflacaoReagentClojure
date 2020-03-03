@@ -6,9 +6,9 @@
   "The entry-point for 'lein run-dev'"
   [& args]
   (println "\nCreating your [DEV] server...")
-  (components/create-and-start-system! :dev)
-  )
-(defn -main [& args]
+  (components/create-and-start-system!))
+
+(defn -main
   [& args]
   (println "\nCreating your [PROD] server...")
-  (components/create-and-start-system! :prod))
+  (components/create-and-start-system!))
