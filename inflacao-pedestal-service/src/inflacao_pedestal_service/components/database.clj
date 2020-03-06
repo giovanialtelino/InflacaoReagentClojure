@@ -17,7 +17,7 @@
                           :adapter            "postgresql"
                           :username           "docker"
                           :password           "docker"
-                          :database-name      "docker"
+                          :database-name      "postgres"
                           :server-name        "localhost"
                           :port-number        5432
                           :register-mbeans    false})
@@ -32,8 +32,7 @@
   (stop [this]
     (assoc this :database nil))
   Object
-  (toString [_] "<Database>")
-  )
+  (toString [_] "<Database>"))
 
 (defn new-database-pool [] (map->DatabasePoolComponent {}))
 

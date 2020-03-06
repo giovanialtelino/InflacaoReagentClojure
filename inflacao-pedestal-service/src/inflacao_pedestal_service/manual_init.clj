@@ -2,15 +2,13 @@
   (:require [clojure.string :as str]
             [java-time :as jt]))
 
-;;left only for record - no more use
+;;left only for record - no more use, pg_dump restore instead
 (def create-table-precos12_ipca12
   (jdbc/create-table-ddl :precos12_ipca12
                          [[:valdata :date :primary :key]
                           [:valvalor :float :not :null]
                           [:nivnome "varchar(32)"]
                           [:tercodigo "varchar(32)"]]))
-
-
 
 (def create-table-igp12_igpm12
   (jdbc/create-table-ddl :igp12_igpm12

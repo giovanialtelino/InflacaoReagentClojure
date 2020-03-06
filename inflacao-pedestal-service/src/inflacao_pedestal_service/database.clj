@@ -17,6 +17,12 @@
    (jdbc/with-db-connection [pool-conn conn]
                             (let [result (jdbc/query pool-conn [query args])] result))))
 
+(defn get-last-update [conn]
+  (:max (nth (pool-query conn ["SELECT MAX (updated) FROM last_update"]) 0)))
+
+(defn update-last-update [conn]
+  (jdbc/insert! conn :last_update {:updated (jt/to-sql-date (jt/local-date-time))}))
+
 (defn check-if-exists-precos12-ipca12 [conn date]
   (let [exist (count (pool-query conn "SELECT valvalor AS valor FROM precos12_ipca12 WHERE valdata::date = ?" date))]
     (if (> exist 0)
@@ -43,17 +49,12 @@
 
 (defn check-if-exists-precos12-inpc12 [conn date]
   (let [exist (count (pool-query conn "SELECT valvalor AS valor FROM precos12_inpc12 WHERE valdata::date = ?" date))]
+
     (if (> exist 0)
       true
       false)))
 
-(defn get-last-update [conn]
-  (:max (nth (pool-query conn ["SELECT MAX (updated) FROM last_update"]) 0)))
-
-(defn update-last-update [conn]
-  (jdbc/insert! conn :last_update {:updated (jt/to-sql-date (jt/local-date-time))}))
-
-(defn check-if-date-key-already-exists [table date conn]
+(defn check-if-date-key-already-exists [conn table date]
   (let [format-date (utils/format-date-to-javatime date)]
     (case table
       "precos12_inpc12" (check-if-exists-precos12-inpc12 conn format-date)
@@ -63,52 +64,24 @@
       "precos12_ipca12" (check-if-exists-precos12-ipca12 conn format-date)
       true)))
 
+
 (defn insert-data-inflacao [conn data]
   (let [{:keys [SERCODIGO VALDATA VALVALOR NIVNOME TERCODIGO]} data]
-    (if (true? (check-if-date-key-already-exists conn (string/lower-case SERCODIGO) VALDATA))
-      (println "Key was already presented")
-      (jdbc/insert! conn (keyword (string/lower-case SERCODIGO))
-                    {:valdata   (utils/format-date-to-javatime VALDATA)
-                     :valvalor  VALVALOR
-                     :nivnome   NIVNOME
-                     :tercodigo TERCODIGO}))))
+    (if (false? (check-if-date-key-already-exists conn (string/lower-case SERCODIGO) VALDATA))
+       (jdbc/insert! conn (keyword (string/lower-case SERCODIGO))
+                     {:valdata   (utils/format-date-to-javatime VALDATA)
+                      :valvalor  VALVALOR
+                      :nivnome   NIVNOME
+                      :tercodigo TERCODIGO}))))
 
 (defn get-value-date-table [conn table date]
   (let [query (str "SELECT valvalor FROM " table " WHERE valdata =  ? LIMIT 1")
         result (pool-query conn query date)]
-    (prn "Result? Result")
-    (prn result)
     (if (< 0 (count result))
       (:valvalor (nth result 0))
       0
       )))
 
-(defn get-value-date-all-table [conn date]
-  (let [formated-date (utils/format-date-to-javatime date)
-        all-values {:precos12_inpc12 (get-value-date-table conn "precos12_inpc12" formated-date)
-                    :igp12_ipc12     (get-value-date-table conn "igp12_ipc12" formated-date)
-                    :igp12_igpdi12   (get-value-date-table conn "igp12_igpdi12" formated-date)
-                    :igp12_igpm12    (get-value-date-table conn "igp12_igpm12" formated-date)
-                    :precos12_ipca12 (get-value-date-table conn "precos12_ipca12" formated-date)}]
-    all-values))
-
-(defn get-value-all-data [conn table]
-  (let [query (str "SELECT TO_CHAR(valvalor::FLOAT, 'FM999999990.00000000') AS Valor, TO_CHAR(valdata, 'dd/mm/yyyy') AS Data FROM " table " ORDER BY valdata DESC")
-        result (pool-query conn query)]
-    (prn "RESULT BELLOW!!!")
-    (prn result)
-    result))
-
-(defn get-all-use-data [conn]
-  (let [all-values {:precos12_inpc12 (get-value-all-data conn "precos12_inpc12")
-                    :igp12_ipc12     (get-value-all-data conn "igp12_ipc12")
-                    :igp12_igpdi12   (get-value-all-data conn "igp12_igpdi12")
-                    :igp12_igpm12    (get-value-all-data conn "igp12_igpm12")
-                    :precos12_ipca12 (get-value-all-data conn "precos12_ipca12")
-                    :last-update     (jt/format "dd/MM/yyyy" (jt/local-date (get-last-update conn)))}]
-    all-values))
-
-;-------
 
 (def links-vector ["http://ipeadata.gov.br/api/odata4/ValoresSerie(SERCODIGO='PRECOS12_IPCA12')",
                    "http://ipeadata.gov.br/api/odata4/ValoresSerie(SERCODIGO='IGP12_IGPM12')",
@@ -152,9 +125,38 @@
 
 (defn access-data [conn]
   (if (true? (check-last-data conn))
-    (let [vector-size (count links-vector)]
-      (loop [i 0]
-        (if (< i vector-size)
-          (do (save-data (parse-data (get-data (get links-vector i))) conn)
-              (recur (inc i)))))
-      (update-last-update conn))))
+    (do
+      (let [vector-size (count links-vector)]
+        (loop [i 0]
+          (if (< i vector-size)
+            (do (save-data (parse-data (get-data (get links-vector i))) conn)
+                (recur (inc i)))))
+        (update-last-update conn)))))
+
+;----
+(defn get-value-date-all-table [conn date]
+  (let [formated-date (utils/format-date-to-javatime date)
+        all-values {:precos12_inpc12 (get-value-date-table conn "precos12_inpc12" formated-date)
+                    :igp12_ipc12     (get-value-date-table conn "igp12_ipc12" formated-date)
+                    :igp12_igpdi12   (get-value-date-table conn "igp12_igpdi12" formated-date)
+                    :igp12_igpm12    (get-value-date-table conn "igp12_igpm12" formated-date)
+                    :precos12_ipca12 (get-value-date-table conn "precos12_ipca12" formated-date)}]
+    all-values))
+
+(defn get-value-all-data [conn table]
+  (let [query (str "SELECT TO_CHAR(valvalor::FLOAT, 'FM999999990.00000000') AS Valor, TO_CHAR(valdata, 'dd/mm/yyyy') AS Data FROM " table " ORDER BY valdata DESC")
+        result (pool-query conn query)]
+    result))
+
+(defn get-all-use-data [conn]
+  (access-data conn)
+  (let [all-values {:precos12_inpc12 (get-value-all-data conn "precos12_inpc12")
+                    :igp12_ipc12     (get-value-all-data conn "igp12_ipc12")
+                    :igp12_igpdi12   (get-value-all-data conn "igp12_igpdi12")
+                    :igp12_igpm12    (get-value-all-data conn "igp12_igpm12")
+                    :precos12_ipca12 (get-value-all-data conn "precos12_ipca12")
+                    :last-update     (jt/format "dd/MM/yyyy" (jt/local-date (get-last-update conn)))}]
+    all-values))
+
+;-------
+

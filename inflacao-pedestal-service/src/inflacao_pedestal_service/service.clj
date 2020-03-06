@@ -7,19 +7,18 @@
             [cheshire.core :as cs]
             [ring.util.response :as ring]))
 
-(def database-pool (atom nil))
-
 (defn home-page
   [request]
   (ring/content-type (ring/response "Hello World my friend, you took the wrong route, sorry.") "text/plain"))
 
-;
-
 (defn graph-generator
   [{{:keys [valor inicio fins]} :json-params
     {:keys [storage]}           :components}]
-  (let [graph-table (deflate/generate-graph valor inicio fins (:database storage))]
-    (ring/content-type (ring/response (cs/generate-string graph-table)) "application/json")))
+  (ring/content-type
+    (ring/response
+      (cs/generate-string
+        (deflate/generate-graph valor inicio fins (:database storage))))
+    "application/json"))
 
 (defn xls-generator
   [{{:keys [storage]} :components}]

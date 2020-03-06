@@ -92,6 +92,7 @@
       cleaned)))
 
 (defn generate-graph [valor inicio fins conn]
+  (database/access-data conn)
   (tufte/profile {}
                  (let [data-inicio-menos-1 (tufte/p ::inicio-menos-1 (str (jt/minus (jt/local-date (front-end-date-parser inicio)) (jt/months 1))))
                        get-valores-inicio (tufte/p ::valores-inicio (conj [] {(keyword inicio) (database/get-value-date-all-table conn data-inicio-menos-1)}))
