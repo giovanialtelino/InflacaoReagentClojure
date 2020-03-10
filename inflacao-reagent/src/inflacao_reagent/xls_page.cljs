@@ -27,8 +27,8 @@
     [lister @table]]])
 
 (defn update-atoms []
-  (go (let [response (<! (http/get "http://localhost:8081/xlsgen"
-                                   {:with-credetials? false
+  (go (let [response (<! (http/get "https://api-calculadora-inflacao.giovanialtelino.com/xlsgen"
+                                   {:with-credetials? true
                                     }))
             body (:body response)]
         (reset! precos12_inpc12 (:precos12_inpc12 body))

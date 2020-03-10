@@ -1,0 +1,3 @@
+rsync -avz target/inflacao-pedestal-service-0.0.2-standalone.jar root@157.245.84.40:~/pedestal-inflacao/inflacao-pedestal.jar
+
+chmod a-x inflacao-pedestal.jar && service supervisor restart

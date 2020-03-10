@@ -9,7 +9,9 @@
 
 (defn home-page
   [request]
-  (ring/content-type (ring/response "Hello World my friend, you took the wrong route, sorry.") "text/plain"))
+  (ring/content-type
+    (ring/response "Hello World my friend, you took the wrong route, sorry.")
+    "text/plain"))
 
 (defn graph-generator
   [{{:keys [valor inicio fins]} :json-params

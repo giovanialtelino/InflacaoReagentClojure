@@ -1,7 +1,6 @@
 (ns inflacao-pedestal-service.components.servlet
   (:require [com.stuartsierra.component :as component]
-            [io.pedestal.http :as bootstrap]
-            [io.pedestal.service-tools.dev :as dev]))
+            [io.pedestal.http :as bootstrap]))
 
 
 (defrecord Servlet [service]

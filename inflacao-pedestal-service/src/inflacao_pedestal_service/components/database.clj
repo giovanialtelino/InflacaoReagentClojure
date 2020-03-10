@@ -33,7 +33,7 @@
                           :pool-name          "db-pool"
                           :adapter            "postgresql"
                           :username           "postgres"
-                          :password           "pedestalTHISisVERT"
+                          :password           "pedestalTHISisVERT!"
                           :database-name      "inflacao"
                           :server-name        "localhost"
                           :port-number        5432

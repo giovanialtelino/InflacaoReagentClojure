@@ -12,12 +12,12 @@
   (update-in service-map
              [::bootstrap/interceptors] #(vec (->> % (cons (add-system service))))))
 
+
 (defn base-prod [routes port]
   {:env                        :prod
    ::bootstrap/routes          #(route/expand-routes (deref routes))
    ::bootstrap/type            ::jetty
-   ::bootstrap/secure-headers  {:content-security-policy {:object-src "none"}}
-   ::bootstrap/allowed-origins {:creds true :allowed-origins (constantly true)}
+   ::bootstrap/allowed-origins {:creds true :allowed-origins ["https://calculadora-inflacao.giovanialtelino.com"]}
    ::bootstrap/port            port})
 
 (defn prod-init [service-map]
@@ -25,10 +25,8 @@
 
 (defn dev-init [service-map]
   (-> service-map
-      (merge {:env                        :dev
-              ::bootstrap/join?           false
-              ::bootstrap/secure-headers  {:content-security-policy {:object-src "none"}}
-              ::bootstrap/allowed-origins {:creds true :allowed-origins (constantly true)}
+      (merge {:env              :dev
+              ::bootstrap/join? false
               })
       bootstrap/default-interceptors
       bootstrap/dev-interceptors))

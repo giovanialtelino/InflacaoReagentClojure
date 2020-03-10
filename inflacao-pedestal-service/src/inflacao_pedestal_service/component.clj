@@ -9,7 +9,7 @@
             [inflacao-pedestal-service.service]))
 
 (def prod-config-map {:env  :prod
-                      :port 8081})
+                      :port 8080})
 
 (def web-app-deps
   [:config :routes :storage])

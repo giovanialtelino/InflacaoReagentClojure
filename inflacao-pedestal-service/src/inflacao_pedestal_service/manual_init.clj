@@ -17,8 +17,6 @@
                           [:nivnome "varchar(32)"]
                           [:tercodigo "varchar(32)"]]))
 
-
-
 (def create-table-igp12_igpdi12
   (jdbc/create-table-ddl :igp12_igpdi12
                          [[:valdata :date :primary :key]
@@ -26,16 +24,12 @@
                           [:nivnome "varchar(32)"]
                           [:tercodigo "varchar(32)"]]))
 
-
-
 (def create-table-igp12_ipc12
   (jdbc/create-table-ddl :igp12_ipc12
                          [[:valdata :date :primary :key]
                           [:valvalor :float :not :null]
                           [:nivnome "varchar(32)"]
                           [:tercodigo "varchar(32)"]]))
-
-
 
 (def create-table-precos12_inpc12
   (jdbc/create-table-ddl :precos12_inpc12
