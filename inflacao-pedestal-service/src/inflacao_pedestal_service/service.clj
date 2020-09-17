@@ -13,7 +13,6 @@
    :type "html"
    :body   "Hello World my friend, you took the wrong route, sorry."})
 
-
 (defn graph-generator
   [request]
     (let [ json-params  (:json-params request)
@@ -45,5 +44,3 @@
                                         :h2?  false
                                         :ssl? false
                                         }})
-
-;https://github.com/ptaoussanis/tufte
