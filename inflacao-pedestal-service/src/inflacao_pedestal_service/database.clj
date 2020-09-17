@@ -1,163 +1,110 @@
 (ns inflacao-pedestal-service.database
   (:require
+    [hikari-cp.core :as hikari]
     [clojure.java.jdbc :as jdbc]
+    [clojure.string :as string]
     [java-time :as jt]
-    [clojure.string :as string]))
+    [inflacao-pedestal-service.utils :as utils]
+    [clojure.string :as str]))
 
-(defn left-zero-cleaner [value]
-  (if (= 0 (Integer/parseInt (str (nth value 0))))
-    (subs value 1 2)
-    value))
+(def datasource-opts {:auto-commit        true
+                      :read-only          false
+                      :connection-timeout 30000
+                      :validation-timeout 5000
+                      :idle-timeout       600000
+                      :max-lifetime       1800000
+                      :minimum-idle       10
+                      :maximum-pool-size  10
+                      :pool-name          "inflacao"
+                      :adapter            "postgresql"
+                      :username           "inflacao"
+                      :password           "inflacaopwd"
+                      :database-name      "inflacao"
+                      :server-name        "localhost"
+                      :port-number        5432
+                      :register-mbeans    false})
 
-(defn format-date-to-javatime [unformated-date]
-  (let [year (Integer/parseInt (subs unformated-date 0 4))
-        month (Integer/parseInt (left-zero-cleaner (subs unformated-date 5 7)))
-        day (Integer/parseInt (left-zero-cleaner (subs unformated-date 8 10)))
-        formated (jt/to-sql-date (jt/local-date-time year month day))]
-    formated))
+(defonce datasource (hikari/make-datasource datasource-opts))
 
-(def pg-db {:dbtype   "postgresql"
-            :dbname   "inflacao"
-            :host     "localhost"
-            :port     "5432"
-            :user     "postgres"
-            :password "pedestalTHISisVERT!"
-            :ssl      false
-            })
+(defn ds-get
+  [ds]
+  {:datasource ds})
 
-(def create-table-precos12_ipca12
-  (jdbc/create-table-ddl :precos12_ipca12
-                         [[:valdata :date :primary :key]
-                          [:valvalor :float :not :null]
-                          [:nivnome "varchar(32)"]
-                          [:tercodigo "varchar(32)"]]))
+(defn- pool-query
+  ([conn query]
+   (jdbc/with-db-connection [pool-conn (ds-get conn)]
+                            (let [result (jdbc/query  pool-conn query)]
+                              result)))
+  ([conn query args]
+   (jdbc/with-db-connection [pool-conn (ds-get conn)]
+                            (let [result (jdbc/query pool-conn [query args])]
+                              result))))
 
-(defn check-if-exists-precos12-ipca12 [date]
-  (let [exist (count (jdbc/query pg-db ["SELECT valvalor AS valor FROM precos12_ipca12 WHERE valdata::date = ?" date]))]
+(defn get-index [datasource name]
+  (:index_id (first (pool-query datasource "SELECT index_id FROM indexes WHERE index_name = ?" (str/lower-case name)))))
+
+(defn check-if-exists [date table-name]
+  (let [exist (count (pool-query datasource ["SELECT inflacao.valvalor AS valor FROM inflacao
+                                              LEFT JOIN indexes
+                                              ON inflacao.indexname = indexes.index_id
+                                              WHERE inflacao.valdata::date = ?
+                                              AND indexes.index_name = ?"
+                                             date table-name]))]
     (if (> exist 0)
       true
       false)))
-
-(def create-table-igp12_igpm12
-  (jdbc/create-table-ddl :igp12_igpm12
-                         [[:valdata :date :primary :key]
-                          [:valvalor :float :not :null]
-                          [:nivnome "varchar(32)"]
-                          [:tercodigo "varchar(32)"]]))
-
-(defn check-if-exists-igp12-igpm12 [date]
-  (let [exist (count (jdbc/query pg-db ["SELECT valvalor AS valor FROM igp12_igpm12 WHERE valdata::date = ?" date]))]
-    (if (> exist 0)
-      true
-      false)))
-
-(def create-table-igp12_igpdi12
-  (jdbc/create-table-ddl :igp12_igpdi12
-                         [[:valdata :date :primary :key]
-                          [:valvalor :float :not :null]
-                          [:nivnome "varchar(32)"]
-                          [:tercodigo "varchar(32)"]]))
-
-(defn check-if-exists-igp12-igpdi12 [date]
-  (let [exist (count (jdbc/query pg-db ["SELECT valvalor AS valor FROM igp12_igpdi12 WHERE valdata::date = ?" date]))]
-    (if (> exist 0)
-      true
-      false)))
-
-(def create-table-igp12_ipc12
-  (jdbc/create-table-ddl :igp12_ipc12
-                         [[:valdata :date :primary :key]
-                          [:valvalor :float :not :null]
-                          [:nivnome "varchar(32)"]
-                          [:tercodigo "varchar(32)"]]))
-
-(defn check-if-exists-igp12-ipc12 [date]
-  (let [exist (count (jdbc/query pg-db ["SELECT valvalor AS valor FROM igp12_ipc12 WHERE valdata::date = ?" date]))]
-    (if (> exist 0)
-      true
-      false)))
-
-(def create-table-precos12_inpc12
-  (jdbc/create-table-ddl :precos12_inpc12
-                         [[:valdata :date :primary :key]
-                          [:valvalor :float :not :null]
-                          [:nivnome "varchar(32)"]
-                          [:tercodigo "varchar(32)"]]))
-
-(defn check-if-exists-precos12-inpc12 [date]
-  (let [exist (count (jdbc/query pg-db ["SELECT valvalor AS valor FROM precos12_inpc12 WHERE valdata::date = ?" date]))]
-    (if (> exist 0)
-      true
-      false)))
-
-(def last-update
-  (jdbc/create-table-ddl :last_update
-                         [[:id :serial :primary :key]
-                          [:updated :date]]))
-
-(defn initialize-first-update []
-  (let [date (jt/to-sql-date (jt/local-date-time 1990 1 1))]
-    (jdbc/insert! pg-db :last_update
-                  {:updated date})))
-
-(defn init-system []
-  (jdbc/db-do-commands pg-db
-                       [last-update
-                        create-table-precos12_inpc12
-                        create-table-igp12_ipc12
-                        create-table-igp12_igpdi12
-                        create-table-igp12_igpm12
-                        create-table-precos12_ipca12])
-  (initialize-first-update))
-
-(defn restart-system []
-  (jdbc/db-do-commands pg-db [
-                              (jdbc/drop-table-ddl :last_update)
-                              (jdbc/drop-table-ddl :precos12_inpc12)
-                              (jdbc/drop-table-ddl :igp12_ipc12)
-                              (jdbc/drop-table-ddl :igp12_igpdi12)
-                              (jdbc/drop-table-ddl :igp12_igpm12)
-                              (jdbc/drop-table-ddl :precos12_ipca12)])
-  (init-system))
-
-(defn get-last-update []
-  (:max (nth (jdbc/query pg-db ["SELECT MAX (updated) FROM last_update"]) 0)))
-
-(defn update-last-update []
-  (jdbc/insert! pg-db :last_update
-                {:updated (jt/to-sql-date (jt/local-date-time))}))
 
 (defn check-if-date-key-already-exists [table date]
-  (let [format-date (format-date-to-javatime date)]
-    (case table
-      "precos12_inpc12" (check-if-exists-precos12-inpc12 format-date)
-      "igp12_ipc12" (check-if-exists-igp12-ipc12 format-date)
-      "igp12_igpdi12" (check-if-exists-igp12-igpdi12 format-date)
-      "igp12_igpm12" (check-if-exists-igp12-igpm12 format-date)
-      "precos12_ipca12" (check-if-exists-precos12-ipca12 format-date)
-      true)))
+  (let [format-date (utils/format-date-to-javatime date)
+        inpc12 "precos12_inpc12"
+        ipc12 "igp12_ipc12"
+        igpdi12 "igp12_igpdi12"
+        igpm12 "igp12_igpm12"
+        ipca12 "precos12_ipca12"]
+    (cond
+      (= table inpc12) (check-if-exists format-date inpc12)
+      (= table ipc12) (check-if-exists format-date ipc12)
+      (= table igpdi12) (check-if-exists format-date igpdi12)
+      (= table igpm12) (check-if-exists format-date igpm12)
+      (= table ipca12) (check-if-exists format-date ipca12)
+      :else "error")))
+
+(defn need-to-update? [key]
+  (let [low-string-key (str/lower-case (name key))
+        last-update (pool-query datasource ["SELECT MAX(valdata) FROM inflacao
+                                             LEFT JOIN indexes
+                                             ON inflacao.indexname = indexes.index_id
+                                             WHERE indexes.index_name = ?" low-string-key])
+        date (:max (first last-update))]
+    (if (nil? date)
+      true
+      (if (and (utils/same-month date) (utils/same-year date))
+        false
+        true
+        ))))
 
 (defn insert-data-inflacao [data]
-  (let [{:keys [SERCODIGO VALDATA VALVALOR NIVNOME TERCODIGO]} data]
-    (if (true? (check-if-date-key-already-exists (string/lower-case SERCODIGO) VALDATA))
-      (println "Key was already presented")
-      (jdbc/insert! pg-db (keyword (string/lower-case SERCODIGO))
-                    {:valdata   (format-date-to-javatime VALDATA)
+  (let [{:keys [SERCODIGO VALDATA VALVALOR NIVNOME TERCODIGO]} data
+        already-added? (check-if-date-key-already-exists (string/lower-case SERCODIGO) VALDATA)]
+    (if (= false already-added?)
+      (jdbc/insert! (ds-get datasource) :inflacao
+                    {:valdata   (utils/format-date-to-javatime VALDATA)
                      :valvalor  VALVALOR
                      :nivnome   NIVNOME
-                     :tercodigo TERCODIGO}))))
+                     :tercodigo TERCODIGO
+                     :addedat (jt/sql-date (jt/local-date))
+                     :indexname (get-index datasource SERCODIGO) }))))
 
-(defn get-value-date-table [table date]
-  (let [
-        query (str "SELECT valvalor FROM " table " WHERE valdata =  ? LIMIT 1")
-        result (jdbc/query pg-db [query date])]
+(defn- get-value-date-table [table date]
+  (let [query (str "SELECT valvalor FROM " table " WHERE valdata =  ?")
+        result (pool-query @datasource [query date])]
     (if (< 0 (count result))
       (:valvalor (nth result 0))
       0
       )))
 
 (defn get-value-date-all-table [date]
-  (let [formated-date (format-date-to-javatime date)
+  (let [formated-date (utils/format-date-to-javatime date)
         all-values {:precos12_inpc12 (get-value-date-table "precos12_inpc12" formated-date)
                     :igp12_ipc12     (get-value-date-table "igp12_ipc12" formated-date)
                     :igp12_igpdi12   (get-value-date-table "igp12_igpdi12" formated-date)
@@ -165,18 +112,21 @@
                     :precos12_ipca12 (get-value-date-table "precos12_ipca12" formated-date)}]
     all-values))
 
-(defn get-value-all-data [table]
-  (let [query (str "SELECT TO_CHAR(valvalor::FLOAT, 'FM999999990.00000000') AS Valor, TO_CHAR(valdata, 'dd/mm/yyyy') AS Data FROM " table " ORDER BY valdata DESC")
-        result (jdbc/query pg-db [query])]
-    result
-    ))
+(defn- get-value-all-data [table]
+  (let [query (str "SELECT TO_CHAR(inflacao.valvalor::FLOAT, 'FM999999990.00000000') AS Valor, TO_CHAR(inflacao.valdata, 'dd/mm/yyyy') AS Data, TO_CHAR(inflacao.addedat, 'dd/mm/yyyy') AS AddedAt "
+                   "FROM inflacao "
+                   "LEFT JOIN indexes "
+                   "ON inflacao.indexname = indexes.index_id "
+                   "WHERE indexes.index_name = ? "
+                   "ORDER BY inflacao.valdata DESC")
+        result (pool-query datasource [query table])]
+    result))
 
-(defn get-all-use-data []
+(defn get-all-data []
+      "Return all the data which is in the database"
   (let [all-values {:precos12_inpc12 (get-value-all-data "precos12_inpc12")
                     :igp12_ipc12     (get-value-all-data "igp12_ipc12")
                     :igp12_igpdi12   (get-value-all-data "igp12_igpdi12")
                     :igp12_igpm12    (get-value-all-data "igp12_igpm12")
-                    :precos12_ipca12 (get-value-all-data "precos12_ipca12")
-                    :last-update     (jt/format "dd/MM/yyyy" (jt/local-date (get-last-update)))}]
+                    :precos12_ipca12 (get-value-all-data "precos12_ipca12")}]
     all-values))
-

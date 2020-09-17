@@ -1,9 +1,6 @@
 (ns inflacao-pedestal-service.deflate
   (:require [inflacao-pedestal-service.database :as database]
-            [java-time :as jt]
-            [taoensso.tufte :as tufte]))
-
-(tufte/add-basic-println-handler! {})
+            [java-time :as jt]))
 
 (defn check-if-is-whitin [date min max]
   (let [day (jt/days 1)
@@ -58,7 +55,7 @@
       (if (< i fins-count)
         (if (= 7 (count (nth fins i)))
           (recur (inc i) (conj all-fins {(keyword (nth fins i))
-                                         (tufte/p ::database-access (database/get-value-date-all-table (front-end-date-parser (nth fins i))))}))
+                                         (database/get-value-date-all-table (front-end-date-parser (nth fins i)))}))
           (recur (inc i) all-fins))
         all-fins))))
 
@@ -110,11 +107,10 @@
       cleaned)))
 
 (defn generate-graph [valor inicio fins]
-  (tufte/profile {}
-                 (let [data-inicio-menos-1 (tufte/p ::inicio-menos-1 (str (jt/minus (jt/local-date (front-end-date-parser inicio)) (jt/months 1))))
-                       get-valores-inicio (tufte/p ::valores-inicio (conj [] {(keyword inicio) (database/get-value-date-all-table data-inicio-menos-1)}))
-                       get-value-all-fins (tufte/p ::fins-valores (get-value-all-fins fins))
-                       deflated (tufte/p ::deflates (deflate-all-values-got valor get-valores-inicio get-value-all-fins inicio fins))
-                       table (tufte/p ::table (inflacao-all-values-got (deflate-all-values-got 100 get-valores-inicio get-value-all-fins inicio fins) fins))]
+                 (let [data-inicio-menos-1  (str (jt/minus (jt/local-date (front-end-date-parser inicio)) (jt/months 1)))
+                       get-valores-inicio  (conj [] {(keyword inicio) (database/get-value-date-all-table data-inicio-menos-1)})
+                       get-value-all-fins  (get-value-all-fins fins)
+                       deflated  (deflate-all-values-got valor get-valores-inicio get-value-all-fins inicio fins)
+                       table  (inflacao-all-values-got (deflate-all-values-got 100 get-valores-inicio get-value-all-fins inicio fins) fins)]
                    {:chart deflated
-                    :table table})))
+                    :table table}))

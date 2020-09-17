@@ -2,48 +2,42 @@
   (:require [io.pedestal.http :as http]
             [io.pedestal.http.body-params :as body-params]
             [inflacao-pedestal-service.deflate :as deflate]
+            [ring.util.response :as ring-resp]
+            [cheshire.core :as cs]
             [inflacao-pedestal-service.database :as database]
-            [taoensso.tufte :as tufte]))
-
-(tufte/add-basic-println-handler! {})
-
-(defn home-page
-  [request]
-  {:stauts 200
-   :type "html"
-   :body   "Hello World my friend, you took the wrong route, sorry."})
-
+            [clojure.core]
+            [inflacao-pedestal-service.data-access :as da]))
 
 (defn graph-generator
   [request]
-    (let [ json-params  (:json-params request)
-         valor  (:valor json-params)
-         inicio  (:inicio json-params)
-         fins  (:fins json-params)
-         graph-table (deflate/generate-graph valor inicio fins)]
-    {:status 200
-     :body   graph-table}))
+  (let [json-params  (:json-params request)
+        valor  (:valor json-params)
+        inicio  (:inicio json-params)
+        fins  (:fins json-params)
+        graph-table (deflate/generate-graph valor inicio fins)]
+    (ring-resp/content-type
+    (ring-resp/response (cs/generate-string graph-table) )
+    "application/json")))
 
 (defn xls-generator
   [request]
-  (let [all-used-data (database/get-all-use-data)]
-    {:status 200
-     :body   all-used-data}))
+  (let [_ (da/access-data)
+        all-used-data (database/get-all-data)]
+    (ring-resp/content-type
+      (ring-resp/response (cs/generate-string all-used-data) )
+      "application/json")))
 
 (def common-interceptors [(body-params/body-params) http/html-body])
 
-(def routes #{["/" :get (conj common-interceptors `home-page)]
-              ["/graphgen" :post (conj common-interceptors `graph-generator)]
+(def routes #{["/graphgen" :post (conj common-interceptors `graph-generator)]
               ["/xlsgen" :get (conj common-interceptors `xls-generator)]})
 
 (def service {:env                     :prod
               ::http/routes            routes
               ::http/resource-path     "/public"
               ::http/type              :jetty
+              ::http/allowed-origins  (constantly true)
               ::http/port              8080
               ::http/container-options {:h2c? true
                                         :h2?  false
-                                        :ssl? false
-                                        }})
-
-;https://github.com/ptaoussanis/tufte
+                                        :ssl? false}})
