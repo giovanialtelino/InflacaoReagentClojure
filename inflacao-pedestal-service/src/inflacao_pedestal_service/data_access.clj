@@ -26,6 +26,7 @@
 
 (defn access-data []
   (println "new into channel")
+  (println "-------------")
    (doseq [kv links-map]
      (if (= true (database/need-to-update? (key kv)))
        (save-data (parse-data (get-data (val kv)))))))

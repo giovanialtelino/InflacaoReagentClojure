@@ -15,7 +15,7 @@
     formated))
 
 (defn same-month [last-update]
-  (if (= (jt/format "MM" (jt/local-date)) (jt/format "MM" (jt/local-date last-update)))
+  (if (= (jt/format "MM" (jt/local-date)) (jt/format "MM"  (jt/local-date last-update) ))
     true
     false))
 

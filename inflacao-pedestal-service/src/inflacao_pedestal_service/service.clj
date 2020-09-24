@@ -6,7 +6,12 @@
             [cheshire.core :as cs]
             [inflacao-pedestal-service.database :as database]
             [clojure.core]
-            [inflacao-pedestal-service.data-access :as da]))
+            [inflacao-pedestal-service.data-access :as da]
+            [clojure.core.async :as async]))
+
+;Would be better to keep the "last update" date in a atom at runtime, so there would be no need to query the database at all the times
+;the thread "update-data" could return a new date, that would update that atom.
+(def update-data (async/chan (async/dropping-buffer 1)))
 
 (defn graph-generator
   [request]
@@ -21,7 +26,7 @@
 
 (defn xls-generator
   [request]
-  (let [_ (da/access-data)
+  (let [update (future (da/access-data))
         all-used-data (database/get-all-data)]
     (ring-resp/content-type
       (ring-resp/response (cs/generate-string all-used-data) )
