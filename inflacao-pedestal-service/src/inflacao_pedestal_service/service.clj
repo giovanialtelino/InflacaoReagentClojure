@@ -9,28 +9,27 @@
             [inflacao-pedestal-service.data-access :as da]
             [clojure.core.async :as async]))
 
-;Would be better to keep the "last update" date in a atom at runtime, so there would be no need to query the database at all the times
-;the thread "update-data" could return a new date, that would update that atom.
-(def update-data (async/chan (async/dropping-buffer 1)))
-
 (defn graph-generator
   [request]
-  (let [json-params  (:json-params request)
-        valor  (:valor json-params)
-        inicio  (:inicio json-params)
-        fins  (:fins json-params)
+  (let [update (future (da/access-data))
+        json-params (:json-params request)
+        valor (:valor json-params)
+        inicio (:inicio json-params)
+        fins (:fins json-params)
         graph-table (deflate/generate-graph valor inicio fins)]
-    (ring-resp/content-type
-    (ring-resp/response (cs/generate-string graph-table) )
-    "application/json")))
+    (-> graph-table
+        (cs/generate-string)
+        (ring-resp/response)
+        (ring-resp/content-type "application/json"))))
 
 (defn xls-generator
   [request]
   (let [update (future (da/access-data))
         all-used-data (database/get-all-data)]
-    (ring-resp/content-type
-      (ring-resp/response (cs/generate-string all-used-data) )
-      "application/json")))
+    (-> all-used-data
+        (cs/generate-string)
+        (ring-resp/response)
+        (ring-resp/content-type "application/json"))))
 
 (def common-interceptors [(body-params/body-params) http/html-body])
 
@@ -41,8 +40,8 @@
               ::http/routes            routes
               ::http/resource-path     "/public"
               ::http/type              :jetty
-              ::http/allowed-origins  (constantly true)
               ::http/port              8080
+              ::http/allowed-origins   {:creds true :allowed-origins (constantly true)}
               ::http/container-options {:h2c? true
                                         :h2?  false
                                         :ssl? false}})

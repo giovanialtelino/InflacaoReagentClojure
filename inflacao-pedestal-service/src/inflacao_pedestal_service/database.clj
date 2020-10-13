@@ -95,11 +95,14 @@
                      :addedat (jt/sql-date (jt/local-date))
                      :indexname (get-index datasource SERCODIGO) }))))
 
-(defn- get-value-date-table [table date]
-  (let [query (str "SELECT valvalor FROM " table " WHERE valdata =  ?")
-        result (pool-query @datasource [query date])]
+(defn- get-value-date-table [index-name date]
+  (let [query (str "SELECT valvalor FROM inflacao
+                    LEFT JOIN indexes
+                    ON inflacao.indexname = indexes.index_id
+                    WHERE indexes.index_name = ? AND inflacao.valdata = ?")
+        result (pool-query datasource [query index-name date])]
     (if (< 0 (count result))
-      (:valvalor (nth result 0))
+      (:valvalor (first result))
       0
       )))
 
